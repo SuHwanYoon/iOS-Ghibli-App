@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		678162CD2F1602E60038CF2D /* .gitignore in Sources */ = {isa = PBXBuildFile; fileRef = 678162CC2F1602D50038CF2D /* .gitignore */; };
 		678162CF2F16032D0038CF2D /* GEMINI.md in Resources */ = {isa = PBXBuildFile; fileRef = 678162CE2F16032D0038CF2D /* GEMINI.md */; };
+		678162E72F1607950038CF2D /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = 678162E62F1607950038CF2D /* AGENTS.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +34,7 @@
 		6777699C2F10E1E300AFB43C /* ghibliAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ghibliAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		678162CC2F1602D50038CF2D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitignore; sourceTree = "<group>"; };
 		678162CE2F16032D0038CF2D /* GEMINI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GEMINI.md; sourceTree = "<group>"; };
+		678162E62F1607950038CF2D /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -83,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				678162CC2F1602D50038CF2D /* .gitignore */,
+				678162E62F1607950038CF2D /* AGENTS.md */,
 				678162CE2F16032D0038CF2D /* GEMINI.md */,
 				677769872F10E1E200AFB43C /* ghibliApp */,
 				677769952F10E1E300AFB43C /* ghibliAppTests */,
@@ -222,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				678162CF2F16032D0038CF2D /* GEMINI.md in Resources */,
+				678162E72F1607950038CF2D /* AGENTS.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,7 +249,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				678162CD2F1602E60038CF2D /* .gitignore in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
