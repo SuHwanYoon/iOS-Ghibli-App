@@ -10,7 +10,7 @@ import Foundation
 // struct은 값 타입(value type)이며, Codable 프로토콜을 채택하여 JSON 인코딩 및 디코딩이 가능합니다.
 // Codable은 Encodable과 Decodable 프로토콜을 모두 포함합니다.
 // Identifiable 프로토콜을 채택하여 각 Film 인스턴스가 고유한 식별자를 가질 수 있습니다.
-struct Film: Codable, Identifiable {
+struct Film: Codable, Identifiable , Equatable{
     let id: String
     let title: String
     let description: String
