@@ -9,19 +9,40 @@ import SwiftUI
 
 struct FilmListView: View {
     
-    // films: [Film]
+    // 이러한 형태는 DI가 아니고
+    // view가 직접 viewModel을 생성해서 소유하는 형태
     @State private var filmsViewModel = FilmsViewModel()
-    
+    // View의 본문
     var body: some View {
-        // List는 films 배열의 각 영화를 표시합니다.
-        // $0은 각 영화 객체를 나타냅니다.
-        // task는 언제 어떤 비통기작업을 실행할지를 지정함
-        List(filmsViewModel.films){
-            Text($0.title)
+        // viewModel의 상태에 따라 다른 UI를 표시
+        switch filmsViewModel.state {
+            // .idle 상태일 때는 "No Films yet"라는 텍스트를 표시하고
+            // .task 수식어를 사용하여 fetch() 메서드를 호출하여 영화 데이터를 가져옵니다.
+            case .idle:
+                Text("No Films yet")
+                    .task {
+                        await filmsViewModel.fetch()
+                    }
+            // .loading 상태일 때는 ProgressView를 표시하여 로딩 중임을 나타냅니다.
+            case .loading:
+                ProgressView{
+                    Text("Loading Films...")
+                }
+            // .loaded 상태일 때는 films 배열을 사용하여 영화 목록을 표시합니다.
+            case .loaded(let films):
+                // List는 films 배열의 각 영화를 표시합니다.
+                // $0은 각 영화 객체를 나타냅니다.
+                // task는 언제 어떤 비통기작업을 실행할지를 지정함
+                List(filmsViewModel.films){
+                    Text($0.title)
+                }
+            // .error 상태일 때는 오류 메시지를 빨간색 텍스트로 표시합니다.
+            case .error(let error):
+                Text(error)
+                    .foregroundColor(.red)
         }
-        .task {
-            await filmsViewModel.fetchFilms()
-        }
+        
+        
     }
 }
 

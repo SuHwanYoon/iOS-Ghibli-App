@@ -16,8 +16,22 @@ enum APIError: LocalizedError {
     case invaildResponse
     case decoding(Error)
     case networkError(Error)
+    
+    // errorDescription 프로퍼티를 구현하여 각 오류에 대한 사용자 친화적인 설명을 제공합니다.
+    var errorDescription: String? {
+        switch self {
+        case .invaildURL:
+            return "The URL provided was invalid."
+        case .invaildResponse:
+            return "The server response was invalid."
+        case .decoding(let error):
+            return "Failed to decode data: \(error.localizedDescription)"
+        case .networkError(let error):
+            return "Network error occurred: \(error.localizedDescription)"
+        }
+        
+    }
 }
-
 // 이 ViewModel은 영화 데이터를 가져오고 저장하는 역할을 합니다.
 // Observable로 인해 뷰에서 이 ViewModel의 변경되면 자동으로 업데이트됩니다.
 @Observable
@@ -41,16 +55,25 @@ class FilmsViewModel {
     
     // fetchFilms함수를 하용하는 공개 비동기 함수 fetch()
     func fetch() async {
-        //
-        guard state == State.idle else { return }
-        
-        state = State.loading
+        // 중복호출을 방지하기 위해서
+        // 현재상태가 idle일때만 실행 그외의 상태는 return으로 종료
+        guard self.state == State.idle else { return }
+        // 로딩 시작상태로 변경
+        self.state = State.loading
         
         do {
+            //API호출 하는 메서드실행
+            // 호출성공시 호출한 Film형태의 배열 가져옴
+            // 상태에 loaded 형태의 상태와 films 배열을 함께 담음
             let films = try await fetchFilms()
             self.state = State.loaded(films)
+        }catch let error as APIError {
+            // APIError 타입의 오류가 발생하면
+            // errorDescription을 사용하여 오류 메시지를 상태에 담음
+            self.state = State.error(error.errorDescription ?? "Unknown error")
         }catch {
-            self.state = State.error(error.localizedDescription)
+            // 오류발생시는 error상태로 저장
+            self.state = State.error("Unknown error")
         }
     }
     
@@ -73,7 +96,7 @@ class FilmsViewModel {
                   (200...299).contains(httpResponse.statusCode) else {
                 throw APIError.invaildResponse
             }
-
+            
             // JSON 데이터를 디코딩하여 films 배열에 저장합니다.
             return try JSONDecoder().decode([Film].self, from: data)
         }catch let error as DecodingError{
@@ -84,3 +107,4 @@ class FilmsViewModel {
         
     }
 }
+
