@@ -45,4 +45,14 @@ struct MockGhibliService: GhibliService {
         
         return data.films
     }
+    
+    // 프로토콜의 메서드 구현
+    func fetchPerson(from URLString: String) async throws -> Person {
+        let data = try loadSampleData()
+        
+        // 샘플 데이터에서 첫 번째 인물을 반환합니다.
+        return data.people.first!
+
+    }
+
 }

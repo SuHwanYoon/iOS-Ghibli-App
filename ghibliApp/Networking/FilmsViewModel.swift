@@ -11,28 +11,9 @@ import Observation
 // 로직에서 사용할 LocalizedError를 준수하는 APIError 열거형을 정의합니다.
 // deconing(Error) 케이스는 디코딩 오류를 캡처하고
 // networkError(Error) 케이스는 네트워크 오류를 캡처합니다.
-enum APIError: LocalizedError {
-    case invaildURL
-    case invaildResponse
-    case decoding(Error)
-    case networkError(Error)
-    
-    // errorDescription 프로퍼티를 구현하여 각 오류에 대한 사용자 친화적인 설명을 제공합니다.
-    var errorDescription: String? {
-        switch self {
-        case .invaildURL:
-            return "The URL provided was invalid."
-        case .invaildResponse:
-            return "The server response was invalid."
-        case .decoding(let error):
-            return "Failed to decode data: \(error.localizedDescription)"
-        case .networkError(let error):
-            return "Network error occurred: \(error.localizedDescription)"
-        }
-        
-    }
-}
+
 // 이 ViewModel은 영화 데이터를 가져오고 저장하는 역할을 합니다.
+// viewModel은 구현체의 내용을 모르며 추상화된 GhibliService 프로토콜에만 의존합니다.
 // Observable로 인해 뷰에서 이 ViewModel의 변경되면 자동으로 업데이트됩니다.
 @Observable
 class FilmsViewModel {
@@ -53,6 +34,7 @@ class FilmsViewModel {
     private let service: GhibliService
     
     // Initializer Injection DI 패턴
+    // viewModel이 생성될 때 
     // init에서 외부서비를 객체를  주입받아 service 프로퍼티에 할당
     init(service: GhibliService = DefaultGhibliService()) {
         self.service = service

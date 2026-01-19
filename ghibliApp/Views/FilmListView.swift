@@ -11,6 +11,7 @@ struct FilmListView: View {
     
     // 이러한 형태는 DI가 아니고
     // view가 직접 viewModel을 생성해서 소유하는 형태
+    // 외부 주입을 위해서 @State private 먼저 삭제
      var filmsViewModel = FilmsViewModel()
     // View의 본문
     var body: some View {
@@ -50,8 +51,9 @@ struct FilmListView: View {
 
 
 #Preview {
-    
+    // @State 속성 래퍼와 @Previewable 속성 래퍼를 사용하여
+    // 미리보기에서 FilmsViewModel 인스턴스를 생성합니다.
     @State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
-    
+    // FilmListView에 viewModel을 주입하여 미리보기를 생성합니다.
     FilmListView(filmsViewModel: viemModel)
 }
