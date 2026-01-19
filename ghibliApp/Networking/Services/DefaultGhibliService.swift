@@ -10,6 +10,7 @@ import Foundation
 // DefaultGhibliService는 GhibliService 프로토콜을 채택한 기본 구현체입니다.
 // 어떻게 할지를 구현하는 부분입니다
 // 일반적으로 상태가 계속변화하지않는 서비스 구현체에는 struct를 사용합니다.
+// struct는 값 타입이고 내부 프로퍼티도 모두 Sendable일 때만 Swift가 안전하다고 판단해 선언을 명시하지 않아도 Sendable로 자동 추론됨
 // 상태가 계속 변해야하는 경우에는 class로 구현합니다
 struct DefaultGhibliService: GhibliService {
     

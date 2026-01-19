@@ -38,7 +38,8 @@ struct MockGhibliService: GhibliService {
     }
     
     
-    
+    // MARK: - Protocol comformace
+    // 프로토콜의 메서드 구현
     func fetchFilms() async throws -> [Film] {
         
         let data = try loadSampleData()
@@ -46,12 +47,21 @@ struct MockGhibliService: GhibliService {
         return data.films
     }
     
-    // 프로토콜의 메서드 구현
+    // 프로토콜의 Person 데이터 가져오는 메서드 구현
     func fetchPerson(from URLString: String) async throws -> Person {
         let data = try loadSampleData()
         
         // 샘플 데이터에서 첫 번째 인물을 반환합니다.
         return data.people.first!
+
+    }
+    
+    // MARK: - Preview Helper
+    // 미리보기용으로 사용할 수 있는 영화를 가져오는 메서드
+    func fetchPreviewFilm()  -> Film {
+        let data = try! loadSampleData()
+        
+        return data.films.first!
 
     }
 
