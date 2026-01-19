@@ -11,10 +11,10 @@ struct FilmListView: View {
     
     // 이러한 형태는 DI가 아니고
     // view가 직접 viewModel을 생성해서 소유하는 형태
-    @State private var filmsViewModel = FilmsViewModel()
+     var filmsViewModel = FilmsViewModel()
     // View의 본문
     var body: some View {
-        
+        // NavigationStack는 네비게이션 기반의 UI를 구성하는 컨테이너입니다.
         NavigationStack {
             // viewModel의 상태에 따라 다른 UI를 표시
             switch filmsViewModel.state {
@@ -25,9 +25,7 @@ struct FilmListView: View {
                 
                 // .loading 상태일 때는 ProgressView를 표시하여 로딩 중임을 나타냅니다.
             case .loading:
-                ProgressView{
-                    Text("Loading Films...")
-                }
+                ProgressView()
                 // .loaded 상태일 때는 films 배열을 사용하여 영화 목록을 표시합니다.
             case .loaded(let films):
                 // List는 films 배열의 각 영화를 표시합니다.
@@ -52,5 +50,8 @@ struct FilmListView: View {
 
 
 #Preview {
-    FilmListView()
+    
+    @State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
+    
+    FilmListView(filmsViewModel: viemModel)
 }
