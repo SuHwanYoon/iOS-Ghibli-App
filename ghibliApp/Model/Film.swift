@@ -11,7 +11,7 @@ import Foundation
 // Codable은 Encodable과 Decodable 프로토콜을 모두 포함합니다.
 
 // Identifiable 프로토콜을 채택하여 각 Film 인스턴스가 고유한 식별자를 가질 수 있습니다.
-struct Film: Codable, Identifiable , Equatable{
+struct Film: Codable, Identifiable , Equatable, Hashable{
     let id: String
     let title: String
     let description: String
@@ -38,6 +38,11 @@ struct Film: Codable, Identifiable , Equatable{
         case releaseYear = "release_date"
         case duration = "running_time"
         case score = "rt_score"
+    }
+    // MARK: Preview
+    // preview용 더미 데이터
+    static var example: Film {
+        MockGhibliService().fetchPreviewFilm()
     }
 }
 
