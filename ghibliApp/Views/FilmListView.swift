@@ -67,7 +67,9 @@ struct FilmListView: View {
     // @State 속성 래퍼와 @Previewable 속성 래퍼를 사용하여
     // 미리보기에서 FilmsViewModel 인스턴스를 생성합니다.
     @State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
-//    @State @Previewable var viemModel = FilmsViewModel(service: DefalultGhibliService())
+
+    // 실제 API 호출을 사용하는 미리보기를 원할 경우 아래 주석을 해제하세요.
+    //    @State @Previewable var viemModel = FilmsViewModel(service: DefaultGhibliService())
     // FilmListView에 viewModel을 주입하여 미리보기를 생성합니다.
     FilmListView(filmsViewModel: viemModel)
 }

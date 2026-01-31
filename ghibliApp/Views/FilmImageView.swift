@@ -9,10 +9,17 @@ import SwiftUI
 
 struct FilmImageView: View {
     
-    let urlPath: String
+    let url:URL?
+    
+    init(urlPath: String) {
+        self.url = URL(string: urlPath)
+    }
+    init(url: URL?) {
+        self.url = url
+    }
     
     var body: some View {
-        AsyncImage(url: URL(string: urlPath)){
+        AsyncImage(url: url){
             phase in
             switch phase {
             case .empty:
@@ -37,12 +44,29 @@ struct FilmImageView: View {
 }
 
 #Preview("poster_image") {
-    FilmImageView(urlPath: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/npOnzAbLh6VOIu3naU5QaEcTepo.jpg")
+    // 테스트용 로컬 이미지 URL 생성
+    // 이미지 이름
+//    let name = "posterImage"
+//    let url = AssetExtractor().createLocalUrl(forImageNamed: name)
+
+    
+// 실제 네트워크 이미지를 테스트하려면 아래 주석을 해제하세요.
+//    FilmImageView(urlPath: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/npOnzAbLh6VOIu3naU5QaEcTepo.jpg")
+    
+    // 로컬 에셋 이미지를 테스트하려면 아래 코드를 사용하세요.
+    // Extension의 URL.convertAssetImage 사용
+    // 짧게 URL.convertAssetImage(named: "posterImage") 형태로 사용 가능
+    FilmImageView(url: URL.convertAssetImage(named: "posterImage"))
         .frame(height: 150)
 }
 
 
 #Preview("banner_image") {
-    FilmImageView(urlPath: "https://image.tmdb.org/t/p/w533_and_h300_bestv2/3cyjYtLWCBE1uvWINHFsFnE8LUK.jpg")
+    let name = "bannerImage"
+    let url = URL.convertAssetImage(named: name)
+//    FilmImageView(urlPath: "https://image.tmdb.org/t/p/w533_and_h300_bestv2/3cyjYtLWCBE1uvWINHFsFnE8LUK.jpg")
+    // 로컬 캐시 이미지를 테스트하려면 아래 코드를 사용하세요.
+    FilmImageView(url: url)
         .frame(height: 300)
 }
+
