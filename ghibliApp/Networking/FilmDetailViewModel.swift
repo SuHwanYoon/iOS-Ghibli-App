@@ -8,6 +8,8 @@
 import Foundation
 import Observation
 
+// 상태변경을 View의 SwiftUI에 알리기 위해 Observable프로토콜 채택
+@Observable
 class FilmDetailViewModel {
     
     // Equatable은 동등성비교 프로토콜
@@ -22,7 +24,7 @@ class FilmDetailViewModel {
     var state: State = State.idle
     
     
-    let service: GhibliService
+    private let service: GhibliService
     // DefaultGhibliService 를 기본값으로 사용하는 이니셜라이저
     init(service: GhibliService = DefaultGhibliService()) {
         self.service = service

@@ -33,10 +33,10 @@ struct Film: Codable, Identifiable , Equatable, Hashable{
         case id, title, image, description, director, producer
         , people
         
-        case bannerImage = "movie_banner"
         
         case releaseYear = "release_date"
         case duration = "running_time"
+        case bannerImage = "movie_banner"
         case score = "rt_score"
     }
     // MARK: Preview

@@ -37,7 +37,11 @@ struct FilmListView: View {
             case .loaded(let films):
                 List(films){ film in
                     NavigationLink(value: film){
-                        Text(film.title)
+                        HStack{
+                            FilmImageView(urlPath: film.image)
+                                .frame(width: 100, height: 150)
+                            Text(film.title)
+                        }
                         
                     }
                 }
@@ -63,6 +67,7 @@ struct FilmListView: View {
     // @State 속성 래퍼와 @Previewable 속성 래퍼를 사용하여
     // 미리보기에서 FilmsViewModel 인스턴스를 생성합니다.
     @State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
+//    @State @Previewable var viemModel = FilmsViewModel(service: DefalultGhibliService())
     // FilmListView에 viewModel을 주입하여 미리보기를 생성합니다.
     FilmListView(filmsViewModel: viemModel)
 }
