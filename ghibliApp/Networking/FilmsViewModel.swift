@@ -32,7 +32,8 @@ class FilmsViewModel {
     
     //GhibliService 프로퍼티 선언
     private let service: GhibliService
-    
+
+
     // Initializer Injection DI 패턴
     // viewModel이 생성될 때 
     // init에서 외부서비를 객체를  주입받아 service 프로퍼티에 할당
