@@ -13,7 +13,10 @@ struct FavoritesScreen: View {
     let filmsViewModel : FilmsViewModel
     
     var body: some View {
-        Text("Favorites Screen")
+        NavigationStack{
+            Text("Favorites Screen")
+                .navigationTitle("Favorites")
+        }
     }
 }
 

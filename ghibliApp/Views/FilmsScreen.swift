@@ -13,10 +13,17 @@ struct FilmsScreen: View {
     let filmsViewModel : FilmsViewModel
     
     var body: some View {
-        // FilmListView를 불러오면서
-        // 상위 컨테이너에서 주입받은 뷰모델을
-        // 다시 하위 뷰로 전달해준다
-        FilmListView(filmsViewModel: filmsViewModel)
+        // NavigationStack는 네비게이션 기반의 UI를 구성하는 컨테이너입니다.
+        NavigationStack {
+            // FilmListView를 불러오면서
+            // 상위 컨테이너에서 주입받은 뷰모델을
+            // 다시 하위 뷰로 전달해준다
+            FilmListView(filmsViewModel: filmsViewModel)
+                .navigationTitle("Ghibli Films")
+        }
+        .task {
+            await filmsViewModel.fetch()
+        }
     }
 }
 
