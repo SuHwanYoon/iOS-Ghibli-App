@@ -12,9 +12,22 @@ struct FavoritesScreen: View {
     // 생명주기가 긴 뷰모델을 재사용 할 수 있음
     let filmsViewModel : FilmsViewModel
     
+    var films: [Film] {
+        // TODO: get favorite
+        // retrieve ids from storage
+        // get data for favorite ids from films data
+        return []
+    }
+    
     var body: some View {
         NavigationStack{
-            Text("Favorites Screen")
+            Group{
+                if films.isEmpty{
+                    ContentUnavailableView("No Favorites yet", systemImage: "heart" )
+                }else{
+                    FilmListView(films: films)
+                }
+            }
                 .navigationTitle("Favorites")
         }
     }

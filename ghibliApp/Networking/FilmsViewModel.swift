@@ -18,7 +18,7 @@ import Observation
 @Observable
 class FilmsViewModel {
     // loaded 상태는 Film 타입의 배열을 연관값으로 가집니다.
-    // Equatable은 동등성비교 프로토콜
+    // Equatable 프로토콜을 채택하여 상태 비교를 가능하게 합니다.
     enum State : Equatable  {
         case idle
         case loading
@@ -33,17 +33,16 @@ class FilmsViewModel {
     //GhibliService 프로퍼티 선언
     private let service: GhibliService
 
+    var films: [Film] = []
 
     // Initializer Injection DI 패턴
-    // viewModel이 생성될 때 
+    // viewModel이 생성될 때
     // init에서 외부서비를 객체를  주입받아 service 프로퍼티에 할당
     init(service: GhibliService = DefaultGhibliService()) {
         self.service = service
     }
     
-    // films는 영화 데이터를 저장할 초기 배열을 먼저 선언
-    // 이 초기배열에 API로부터 가져온 Film 타입의 배열을 저장
-    var films: [Film] = []
+    
     
     // fetchFilms함수를 하용하는 공개 비동기 함수 fetch()
     func fetch() async {
