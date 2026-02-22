@@ -24,23 +24,7 @@ struct FilmListView: View {
         // film in FilmDetailScreen(film: film)는 선택된 영화를 FilmDetailScreen 뷰에 전달합니다.
         List(films){ film in
             NavigationLink(value: film){
-                HStack{
-                    FilmImageView(urlPath: film.image)
-                        .frame(width: 100, height: 150)
-                    Text(film.title)
-                    
-                    // 영화목록에 Favorite를 추가하는 Button
-                    Button {
-                        // 즐겨찾기 여부에 따라 영화 항목을 즐겨찾기에 추가하거나 제거
-                        
-                    } label: {
-                        Image(systemName:
-                                // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
-                                FavoritesViewModel().isFavorite(filmID:  film.id) ? "heart.fill" :"heart")
-                            
-                    }
-
-                }
+                FilmRow(film: film, favoritesViewModel: favoritesViewModel)
                 
             }
         }
@@ -54,7 +38,38 @@ struct FilmListView: View {
 }
 
 
-
+// FilmListView내부에서 사용할 FilmRow 추출
+private struct FilmRow: View {
+    let film: Film
+    let favoritesViewModel: FavoritesViewModel
+    
+    var isFavorite: Bool {
+        favoritesViewModel.isFavorite(filmID: film.id)
+    }
+    
+    var body: some View {
+        HStack{
+            FilmImageView(urlPath: film.image)
+                .frame(width: 100, height: 150)
+            Text(film.title)
+            
+            // 영화목록에 Favorite를 추가하는 Button
+            Button {
+                // 즐겨찾기 여부에 따라 영화 항목을 즐겨찾기에 추가하거나 제거
+                favoritesViewModel.toggleFavorite(filmID: film.id)
+            } label: {
+                Image(systemName:
+                        // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
+                      isFavorite ? "heart.fill" :"heart")
+                        .foregroundColor(isFavorite ? .red : .gray)
+                
+                
+            }
+            .buttonStyle(.plain)
+            
+        }
+    }
+}
 
 
 //#Preview {
