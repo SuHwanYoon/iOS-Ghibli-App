@@ -20,7 +20,7 @@ struct MockFavoriteStorage: FavoriteStorage {
     }
     
     func save(favoriteIDs: Set<String>) {
-        <#code#>
+        
     }
     
     

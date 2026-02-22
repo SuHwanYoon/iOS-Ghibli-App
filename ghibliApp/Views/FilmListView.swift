@@ -10,6 +10,9 @@ import SwiftUI
 struct FilmListView: View {
     // FilmListView호출시 films 배열을 주입받음
     var films: [Film]
+    // FavoritesViewModel은 즐겨찾기 기능을 관리하는 뷰 모델입니다. 이 뷰 모델을 사용하여 영화 항목을 즐겨찾기에 추가하거나 제거할 수 있습니다.
+    let favoritesViewModel : FavoritesViewModel
+    
     
     // View의 본문
     var body: some View {
@@ -25,6 +28,18 @@ struct FilmListView: View {
                     FilmImageView(urlPath: film.image)
                         .frame(width: 100, height: 150)
                     Text(film.title)
+                    
+                    // 영화목록에 Favorite를 추가하는 Button
+                    Button {
+                        // 즐겨찾기 여부에 따라 영화 항목을 즐겨찾기에 추가하거나 제거
+                        
+                    } label: {
+                        Image(systemName:
+                                // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
+                                FavoritesViewModel().isFavorite(filmID:  film.id) ? "heart.fill" :"heart")
+                            
+                    }
+
                 }
                 
             }
