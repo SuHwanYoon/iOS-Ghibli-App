@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// FilmImageView는 영화 포스터나 배너 이미지를 표시하는 뷰입니다. URL을 받아서 AsyncImage를 사용하여 이미지를 비동기적으로 로드합니다.
 struct FilmImageView: View {
     
     let url:URL?
