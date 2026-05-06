@@ -60,6 +60,8 @@ private struct FilmRow: View {
             } label: {
                 Image(systemName:
                         // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
+                      // isFavorite이 true이면 heart.fill, false이면 heart를 표시
+                      // foregroundColor는 이미지의 색상을 설정하는데, 즐겨찾기된 항목은 빨간색, 그렇지 않은 항목은 회색으로 표시
                       isFavorite ? "heart.fill" :"heart")
                         .foregroundColor(isFavorite ? .red : .gray)
                 
@@ -72,13 +74,26 @@ private struct FilmRow: View {
 }
 
 
-//#Preview {
-//    // @State 속성 래퍼와 @Previewable 속성 래퍼를 사용하여
-//    // 미리보기에서 FilmsViewModel 인스턴스를 생성합니다.
-//    @State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
-//
-//    // 실제 API 호출을 사용하는 미리보기를 원할 경우 아래 주석을 해제하세요.
-//    //    @State @Previewable var viemModel = FilmsViewModel(service: DefaultGhibliService())
-//    // FilmListView에 viewModel을 주입하여 미리보기를 생성합니다.
-//    FilmListView(filmsViewModel: viemModel)
-//}
+#Preview {
+    // @State 속성 래퍼와 @Previewable 속성 래퍼를 사용하여
+    // 미리보기에서 FilmsViewModel 인스턴스를 생성합니다.
+    //@State @Previewable var viemModel = FilmsViewModel(service: MockGhibliService())
+    
+    // 실제 API 호출을 사용하는 미리보기를 원할 경우 아래 주석을 해제하세요.
+    //    @State @Previewable var viemModel = FilmsViewModel(service: DefaultGhibliService())
+    // FilmListView에 viewModel을 주입하여 미리보기를 생성합니다.
+    //FilmListView(filmsViewModel: viemModel)
+    
+    // 즐겨찾기 기능을 포함한 미리보기를 생성하기 위해 FavoritesViewModel 인스턴스를 생성하고 FilmListView에 주입합니다.
+    // @Previeable는 Preview에서 상태변화를 포함한 실제 동작을 Preview에서 재현하기 위해서
+    @State @Previewable var favorites
+    = FavoritesViewModel(service: MockFavoriteStorage())
+    // NavigationStack는 영화를 클릭했을때 상세화면으로 이동되는거 테스트 하기 위해서
+    // task를 통해서 ViewModel안에 있는데이터를 채움
+    NavigationStack {
+        FilmListView(films: [Film.example, Film.exampleFavorite], favoritesViewModel: favorites)
+    }
+    .task {
+        favorites.load()
+    }
+}

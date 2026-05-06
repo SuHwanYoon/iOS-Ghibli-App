@@ -37,6 +37,7 @@ struct ContentView: View {
                  SearchScreen()
             }
         }
+        // task 수명주기 modifier는 뷰가 나타날 때 비동기 작업을 실행할 수 있게 해줍니다. 여기서는 filmsViewModel과 favoritesViewModel의 load() 메서드를 호출하여 데이터를 로드하는 작업을 수행합니다.
         .task {
             favoritesViewModel.load()
         }
