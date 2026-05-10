@@ -29,7 +29,8 @@ struct FilmListView: View {
             }
         }
         .navigationDestination(for: Film.self){
-            film in FilmDetailScreen(film: film)
+            film in FilmDetailScreen(film: film,
+            favoritesViewModel: favoritesViewModel)
         }
         
     }
@@ -48,28 +49,52 @@ private struct FilmRow: View {
     }
     
     var body: some View {
-        HStack{
+        // 전체영역 레이아웃
+        HStack(alignment: .top){
+            // FilmImageView는
             FilmImageView(urlPath: film.image)
                 .frame(width: 100, height: 150)
-            Text(film.title)
             
-            // 영화목록에 Favorite를 추가하는 Button
-            Button {
-                // 즐겨찾기 여부에 따라 영화 항목을 즐겨찾기에 추가하거나 제거
-                favoritesViewModel.toggleFavorite(filmID: film.id)
-            } label: {
-                Image(systemName:
-                        // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
-                      // isFavorite이 true이면 heart.fill, false이면 heart를 표시
-                      // foregroundColor는 이미지의 색상을 설정하는데, 즐겨찾기된 항목은 빨간색, 그렇지 않은 항목은 회색으로 표시
-                      isFavorite ? "heart.fill" :"heart")
+            
+            // .leading 정렬로 영화 제목과 즐겨찾기 버튼을 수직으로 배치
+            VStack(alignment: .leading){
+                // 영화제목과 heart번트의 Hstack
+                HStack{
+                    // 영화 제목을 표시하는 Content View입니다.
+                    Text(film.title)
+                        .bold()
+                    // title과 heart Button사이에 간격을 주기
+                    Spacer()
+                    // Heart를 추가하는 Control View
+                    Button {
+                        // 즐겨찾기 여부에 따라 영화 항목을 즐겨찾기에 추가하거나 제거
+                        favoritesViewModel.toggleFavorite(filmID: film.id)
+                    } label: {
+                        Image(systemName:
+                                // 즐겨찾기 여부에 따라 heart.fill 또는 heart 시스템 이미지를 표시
+                              // isFavorite이 true이면 heart.fill, false이면 heart를 표시
+                              // foregroundColor는 이미지의 색상을 설정하는데, 즐겨찾기된 항목은 빨간색, 그렇지 않은 항목은 회색으로 표시
+                              isFavorite ? "heart.fill" :"heart")
                         .foregroundColor(isFavorite ? .red : .gray)
-                
-                
+                    }
+                    .buttonStyle(.plain)
+                    .controlSize(.large)
+                    
+                }
+                .padding(.bottom)
+                // 영화제목, heart아래 Content View
+                // Derector를 표시하는 Text뷰입니다. film.director는 영화의 감독을 나타냅니다.
+                Text(film.director)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+               // releaseYear를 표시하는 Text뷰입니다.
+               Text("Release Year: \(film.releaseYear)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
-            .buttonStyle(.plain)
-            
         }
+        // 전체영역 레이아웃에 상단 padding주기
+        .padding(.top)
     }
 }
 

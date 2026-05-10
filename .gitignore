@@ -77,8 +77,6 @@ GoogleService-Info.plist
 *.xcuserstate
 *.xcuserdata/
 *.xcworkspace/xcuserdata/
-*.xcworkspace/xcshareddata/
-*.xcodeproj/xcshareddata/
 
 # Derived data
 DerivedData/

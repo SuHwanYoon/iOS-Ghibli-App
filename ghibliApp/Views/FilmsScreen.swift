@@ -33,6 +33,7 @@ struct FilmsScreen: View {
                     ProgressView()
                     // .loaded 때는 films 배열을 사용하여 영화 목록을 표시합니다.
                     // favoritesViewModel을 FilmListView에 전달하여 즐겨찾기 기능을 사용할 수 있도록 합니다.
+                    // FilmListView는 영화 목록을 표시하는 커스텀 뷰입니다.
                 case .loaded(let films):
                     FilmListView(films: films,
                     favoritesViewModel: favoritesViewModel)

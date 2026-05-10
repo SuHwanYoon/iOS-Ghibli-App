@@ -12,8 +12,8 @@ import SwiftUI
 struct ContentView: View {
     // FilmsViewModel 인스턴스를 상태 변수로 선언합니다.
     // 이 상태변수를 view에서 공유해서 재사용 한다
-    @State private var filmsViewModel = FilmsViewModel()
     // FavoriteViewModel 인스턴스도 상태 변수로 선언합니다.
+    @State private var filmsViewModel = FilmsViewModel()
     @State private var favoritesViewModel = FavoritesViewModel()
 
     var body: some View {
