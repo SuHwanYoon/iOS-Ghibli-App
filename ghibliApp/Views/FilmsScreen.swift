@@ -46,9 +46,6 @@ struct FilmsScreen: View {
             }
             .navigationTitle("Ghibli Films")
         }
-        .task {
-            await filmsViewModel.fetch()
-        }
     }
 }
 
