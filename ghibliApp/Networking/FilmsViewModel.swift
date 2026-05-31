@@ -32,8 +32,8 @@ class FilmsViewModel {
     
     //GhibliService 프로퍼티 선언
     private let service: GhibliService
-
-    var films: [Film] = []
+    // 영화 데이터를 저장할 films 배열 선언
+//    var films: [Film] = []
 
     // Initializer Injection DI 패턴
     // viewModel이 생성될 때
@@ -68,6 +68,17 @@ class FilmsViewModel {
         }
     }
     
-
+// MARK: - Preview
+    // example 정적 프로퍼티는 미리보기에서 사용할 예시 데이터를 제공합니다.
+    // 제공하는 방식은 FilmsViewModel을 생성하고, 상태를 .loaded로 설정하여 예시 영화 데이터를 포함하는 배열을 전달합니다.
+    static var example: FilmsViewModel {
+        let filmsViewModel = FilmsViewModel(service: MockGhibliService())
+        // .loaded는 State.loaded로 enum의 케이스를 나타냅니다. [Film.example, Film.exampleFavorite]는 예시 영화 데이터를 포함하는 배열입니다.
+        // enum case shorthand으로 .loaded로 작성하여 State.loaded를 나타냅니다.
+        filmsViewModel.state = .loaded([Film.example, Film.exampleFavorite])
+        return filmsViewModel
+    }
+    
+    
 }
 
