@@ -13,15 +13,18 @@ import Observation
 class FilmDetailViewModel {
     
     // Equatable은 동등성비교 프로토콜
-    enum State : Equatable  {
-        case idle
-        case loading
-        case loaded([Person])
-        case error(String)
-    }
-    
+//    enum State : Equatable  {
+//        case idle
+//        case loading
+//        case loaded([Person])
+//        case error(String)
+//    }
     // state를 저장할 프로퍼티 선언 및 초기화
-    var state: State = State.idle
+//    var state: State = State.idle
+  
+    // 만들어둔 LoadingState를 사용하여 상태를 저장할 프로퍼티 선언 및 초기화
+    var state: LoadingState<[Person]> = .idle
+    
     
     
     private let service: GhibliService
@@ -33,7 +36,7 @@ class FilmDetailViewModel {
     
     func fetch(for film: Film) async {
         // state가 loading 상태가 아니면 중복호출 방지를 위해 return
-        guard state != State.loading else { return }
+        guard !state.isLoading else { return }
         // loading상태를 확인했으니 state를 loading상태로 변경
         state = .loading
         
@@ -72,10 +75,10 @@ class FilmDetailViewModel {
         }catch let error as APIError {
             // APIError 타입의 오류가 발생하면
             // errorDescription을 사용하여 오류 메시지를 상태에 담음
-            self.state = State.error(error.errorDescription ?? "Unknown error")
+            self.state = .error(error.errorDescription ?? "Unknown error")
         }catch {
             // 오류발생시는 error상태로 저장
-            self.state = State.error("Unknown error")
+            self.state = .error("Unknown error")
         }
         
     }

@@ -47,11 +47,22 @@ struct MockGhibliService: GhibliService {
         return data.films
     }
     
+    // GibliService의 메서드를 searchFilm 메서드 구현
+    // 빈배열을 반환하는 searchFilm 메서드 구현
+    func searchFilm(for searchTerm: String) async throws -> [Film] {
+        let allFilms = try await fetchFilms()
+        
+        // 검색어를 대소문자 구분 없이 포함하는 영화들을 필터링하여 반환합니다.
+        return allFilms.filter { film in
+            film.title.localizedCaseInsensitiveContains(searchTerm)
+        }
+    }
+    
     // 프로토콜의 Person 데이터 가져오는 메서드 구현
     func fetchPerson(from URLString: String) async throws -> Person {
         let data = try loadSampleData()
         
-        // 샘플 데이터에서 첫 번째 인물을 반f환합니다.
+        // 샘플 데이터에서 첫 번째 인물을 반환합니다.
         return data.people.first!
 
     }

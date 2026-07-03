@@ -19,16 +19,18 @@ import Observation
 class FilmsViewModel {
     // loaded 상태는 Film 타입의 배열을 연관값으로 가집니다.
     // Equatable 프로토콜을 채택하여 상태 비교를 가능하게 합니다.
-    enum State : Equatable  {
-        case idle
-        case loading
-        case loaded([Film])
-        case error(String)
-    }
+//    enum State : Equatable  {
+//        case idle
+//        case loading
+//        case loaded([Film])
+//        case error(String)
+//    }
     // 현재 ViewModel의 상태를 저장할 프로퍼티
     // Swift에서 모든 저장프로퍼티는 초기화되어있어야 하므로 .idle로 초기화 축약형으로도 가능
     // 초기화방법은 선언시 초기화혹은 init에서 초기화 하기가 있음
-    var state: State = State.idle
+//    var state: State = State.idle
+    
+    var state: LoadingState<[Film]> = .idle
     
     //GhibliService 프로퍼티 선언
     private let service: GhibliService
@@ -48,23 +50,23 @@ class FilmsViewModel {
     func fetch() async {
         // 중복호출을 방지하기 위해서
         // 현재상태가 idle일때만 실행 그외의 상태는 return으로 종료
-        guard self.state == State.idle else { return }
+        guard !state.isLoading || state.error != nil else { return }
         // 로딩 시작상태로 변경
-        self.state = State.loading
+        self.state = .loading
         
         do {
             //API호출 하는 메서드실행
             // 호출성공시 호출한 Film형태의 배열 가져옴
             // serive를 참조해서 상태에 loaded 형태의 상태와 films 배열을 함께 담음
             let films = try await service.fetchFilms()
-            self.state = State.loaded(films)
+            self.state = .loaded(films)
         }catch let error as APIError {
             // APIError 타입의 오류가 발생하면
             // errorDescription을 사용하여 오류 메시지를 상태에 담음
-            self.state = State.error(error.errorDescription ?? "Unknown error")
+            self.state = .error(error.errorDescription ?? "Unknown error")
         }catch {
             // 오류발생시는 error상태로 저장
-            self.state = State.error("Unknown error")
+            self.state = .error("Unknown error")
         }
     }
     

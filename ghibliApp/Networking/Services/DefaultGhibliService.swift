@@ -7,7 +7,7 @@
 
 import Foundation
 
-// DefaultGhibliService는 GhibliService 프로토콜을 채택한 기본 구현체입니다.
+// DefaultGhibliService는 GhibliService 프로토콜을 채택conform한 기본 구현체입니다.
 // 어떻게 할지를 구현하는 부분입니다
 // 일반적으로 상태가 계속변화하지않는 서비스 구현체에는 struct를 사용합니다.
 // struct는 값 타입이고 내부 프로퍼티도 모두 Sendable일 때만 Swift가 안전하다고 판단해 선언을 명시하지 않아도 Sendable로 자동 추론됨
@@ -57,6 +57,16 @@ struct DefaultGhibliService: GhibliService {
          // fetch 제네릭 메서드를 호출하여 [Film].self 타입을 지정하여 호출
          return try await fetch(from: url, type: [Film].self)
          
+    }
+    
+    // 검색어를 매개변수로 받아 해당 검색어와 일치하는 영화를 반환하는 프로토콜 메서드 구현체
+    func searchFilm(for searchTerm: String) async throws -> [Film] {
+        let allFilms = try await fetchFilms()
+        
+        // 검색어를 대소문자 구분 없이 포함하는 영화들을 필터링하여 반환합니다.
+        return allFilms.filter { film in
+            film.title.localizedCaseInsensitiveContains(searchTerm)
+        }
     }
     
     // Person을 가져오는 프로토콜 메서드의 구현체

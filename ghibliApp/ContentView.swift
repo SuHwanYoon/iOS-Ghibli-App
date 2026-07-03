@@ -34,7 +34,7 @@ struct ContentView: View {
             }
             // role 속성은 탭의 역할을 지정하는 데 사용됩니다. .search 역할은 이 탭이 검색 기능과 관련이 있음을 나타냅니다.
             Tab(role: .search){
-                 SearchScreen()
+                SearchScreen(favoriteViewModel: favoritesViewModel)
             }
         }
         // task 수명주기 modifier는 뷰가 나타날 때 비동기 작업을 실행할 수 있게 해줍니다. 여기서는 filmsViewModel과 favoritesViewModel의 load() 메서드를 호출하여 데이터를 로드하는 작업을 수행합니다.
