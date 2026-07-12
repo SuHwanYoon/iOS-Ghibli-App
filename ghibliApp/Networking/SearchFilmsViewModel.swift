@@ -20,8 +20,9 @@ class SearchFilmsViewModel {
 //    var films: [Film] = []
 
     // Initializer Injection DI 패턴
-    // viewModel이 생성될 때
-    // init에서 외부서비를 객체를  주입받아 service 프로퍼티에 할당
+    // viewModel이 생성될 때 init에서 외부서비를 객체를  주입받아 service 프로퍼티에 할당
+    // 생성시 service주입이 없으면 DefaultGhibliService()를 기본값으로 사용
+    // 있으면 주입받은 service를 사용
     init(service: GhibliService = DefaultGhibliService()) {
         self.service = service
     }
@@ -38,7 +39,10 @@ class SearchFilmsViewModel {
         // 현재상태가 idle일때만 실행 그외의 상태는 return으로 종료
 //        guard !state.isLoading || state.error != nil else { return }
         
-        
+        // Task.sleep(for:) 메서드를 사용하여 0.5초 동안 대기합니다. 이 시간 동안 사용자가 계속 입력을 하고 있다면 이전 작업은 취소되고 새로운 작업이 시작됩니다. 이를 통해 불필요한 API 호출을 방지하고, 사용자가 입력을 완료한 후에만 검색을 수행하도록 합니다.
+        // !Task.isCancelled를 사용하여 현재 작업이 취소되었는지 확인합니다. 만약 취소되었다면, 이후의 API 호출을 수행하지 않고 함수를 종료합니다.
+        try? await Task.sleep(for: .milliseconds(500))
+        guard !Task.isCancelled else { return }
         // guard는 조건이 true일 때만 코드 블록을 실행하고, false일 경우에는 else 블록을 실행합니다.
         // !searchTerm.is는 검색어가 비어있지 않은 경우에만 실행검색어가 비어있으면 함수 실행을 종료합니다.
         guard !searchTerm.isEmpty else {

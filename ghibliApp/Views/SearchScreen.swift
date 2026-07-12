@@ -45,10 +45,7 @@ struct SearchScreen: View {
             }
             .searchable(text: $text)
             .task(id: text){
-                // Task.sleep(for:) 메서드를 사용하여 0.5초 동안 대기합니다. 이 시간 동안 사용자가 계속 입력을 하고 있다면 이전 작업은 취소되고 새로운 작업이 시작됩니다. 이를 통해 불필요한 API 호출을 방지하고, 사용자가 입력을 완료한 후에만 검색을 수행하도록 합니다.
-                // !Task.isCancelled를 사용하여 현재 작업이 취소되었는지 확인합니다. 만약 취소되었다면, 이후의 API 호출을 수행하지 않고 함수를 종료합니다.
-                try? await Task.sleep(for: .milliseconds(500))
-                guard !Task.isCancelled else { return }
+                
                 // await self.searchViewModel.fetch(for: text) 메서드를 호출하여 검색어에 해당하는 영화를 가져옵니다. 이 메서드는 비동기적으로 실행되며, 검색 결과가 로드되면 searchViewModel의 상태가 업데이트되어 UI가 자동으로 갱신됩니다.
                 await self.searchViewModel.fetch(for: text)
             }
