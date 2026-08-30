@@ -38,12 +38,18 @@ struct ghibliAppTests {
         // MARK: - Properties
         // mockFilms는 테스트용으로 사용할 영화 배열입니다.
         // shouldThrowError는 네트워크 오류를 시뮬레이션할지 여부를 결정하는 플래그입니다.
+        // fetchDelay는 fetch 메서드 호출 시 지연 시간을 설정하는 데 사용됩니다.
         let mockFilms: [Film]
         let shouldThrowError: Bool
+        let fetchDelay: Duration
         
-        init(mockFilms: [Film], shouldThrowError: Bool = false) {
+        // 기본값을 지정한 이유는 테스트에서 모든 매개변수를 항상 지정하지 않아도 되도록 하기 위함입니다. 예를 들어, 단순히 mockFilms만 지정하고 싶을 때, shouldThrowError와 fetchDelay는 기본값으로 설정되어 있어 편리하게 사용할 수 있습니다.
+        init(mockFilms: [Film],
+             shouldThrowError: Bool = false,
+             fetchDelay: Duration = .zero) {
             self.mockFilms = mockFilms
             self.shouldThrowError = shouldThrowError
+            self.fetchDelay = fetchDelay
         }
         // MARK: - Protocol comformace
         // 프로토콜의 메서드 구현
@@ -56,6 +62,11 @@ struct ghibliAppTests {
             //NSError은 NSError를 사용하여 네트워크 오류를 시뮬레이션합니다.
             if shouldThrowError {
                 throw APIError.networkError(NSError(domain: "Mock Error", code: -1, userInfo: nil))
+            }
+            
+            // fetchDelay가 0보다 크면 지정된 시간만큼 대기합니다.
+            if fetchDelay > .zero {
+                try await Task.sleep(for: fetchDelay)
             }
             return mockFilms
         }
@@ -74,6 +85,11 @@ struct ghibliAppTests {
             if shouldThrowError {
                 throw APIError.networkError(NSError(domain: "Mock Error", code: -1, userInfo: nil))
             }
+            
+            if fetchDelay > .zero {
+                try await Task.sleep(for: fetchDelay)
+            }
+            
             // searchTerm이 비어있으면 mockFilms 배열 전체를 반환하고, 그렇지 않으면 검색어를 포함하는 영화만 필터링하여 반환합니다.
             if searchTerm.isEmpty {
                 return mockFilms
@@ -202,5 +218,36 @@ struct ghibliAppTests {
         } else {
             Issue.record("Expected state to be .error, but found \(viewModel.state)")
         }
+    }
+    
+    // testCancellationAfterAPICall 함수는
+//    SearchFilmsViewModel의 fetch 메서드가 API 호출 후에 작업이 취소되었을 때
+//    상태 업데이트가 발생하지 않는지 확인하는 테스트입니다.
+    // 상태 업데이트가 발생하지 않아야 하는 이유는, fetch 메서드가 API 호출 후에 작업이 취소되면 더 이상 상태를 업데이트하지 않고 종료되어야 하기 때문입니다.
+    @MainActor
+    @Test("Task cancellation after API call prevents state update")
+    func testCancellationAfterAPICall() async throws {
+        // 1. Mock 서비스를 준비한다.
+        let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .microseconds(100))
+        
+        // 2. SearchFilmsViewModel을 생성한다.
+        let viewModel = SearchFilmsViewModel(service: service)
+        
+        // 3. 검색어를 사용하여 fetch 메서드를 호출한다.
+        // fetch작업은 주어진 검색어를 기반으로 영화 데이터를 가져오는 비동기 작업입니다.
+        // 실제 앱에서는 사용자가 검색어를 입력하고, 그에 따라 API 호출이 이루어지는데, 이 과정에서 사용자가 입력을 중단하거나 다른 작업을 수행할 수 있습니다. 따라서 fetch 메서드가 완료되기 전에 작업이 취소될 수 있습니다.
+        let task = Task {
+            await viewModel.fetch(for: "tot")
+        }
+        
+        // 4. fetch 메서드가 완료되기 전에 작업을 취소한다.
+        try? await Task.sleep(for: .microseconds(50))
+        task.cancel()
+        
+        // 5. fetch 메서드가 완료될 때까지 기다린다.
+        await task.value
+        
+        print(viewModel.state)
+        
     }
 }
