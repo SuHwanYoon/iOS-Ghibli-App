@@ -236,7 +236,7 @@ struct ghibliAppTests {
     @Test("Task cancellation after API call prevents state update")
     func testCancellationAfterAPICall() async throws {
         // 1. Mock 서비스를 준비한다.
-        let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .microseconds(100))
+        let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .milliseconds(100))
         
         // 2. SearchFilmsViewModel을 생성한다.
         let searchFilmViewModel = SearchFilmsViewModel(service: service)
@@ -248,8 +248,8 @@ struct ghibliAppTests {
             await searchFilmViewModel.fetch(for: "tot")
         }
         
-        // 4. fetch 메서드가 완료되기 전에 작업을 취소한다.
-        try? await Task.sleep(for: .microseconds(50))
+        // 4. fetch 메서드가 완료되기 전에 작업을 취소한다. (500ms 디바운스 완료 후 API 응답 대기 중인 550ms 시점에 취소)
+        try? await Task.sleep(for: .milliseconds(550))
         task.cancel()
         
         // 5. fetch 메서드가 완료될 때까지 기다린다.

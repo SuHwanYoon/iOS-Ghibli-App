@@ -38,24 +38,17 @@ class SearchFilmsViewModel {
     // 일단 검색어가 비어있지 않은지 확인하고, 로딩 상태로 전환한 후
     // GhibliService를 통해 영화 데이터를 가져옵니다. 성공하면 상태를 .loaded로 변경하고, 실패하면 상태를 .error로 변경합니다.
     func fetch(for searchTerm: String) async {
-        // searchTerm이 이전 검색어와 동일하면 중복 호출을 방지하기 위해 함수를 종료합니다.
         self.currentSearchTerm = searchTerm
         
-        // 중복호출을 방지하기 위해서
-        // 현재상태가 idle일때만 실행 그외의 상태는 return으로 종료
-//        guard !state.isLoading || state.error != nil else { return }
+        guard !searchTerm.isEmpty else {
+            state = .idle
+            return
+        }
         
-        // Task.sleep(for:) 메서드를 사용하여 0.5초 동안 대기합니다. 이 시간 동안 사용자가 계속 입력을 하고 있다면 이전 작업은 취소되고 새로운 작업이 시작됩니다. 이를 통해 불필요한 API 호출을 방지하고, 사용자가 입력을 완료한 후에만 검색을 수행하도록 합니다.
-        // !Task.isCancelled를 사용하여 현재 작업이 취소되었는지 확인합니다. 만약 취소되었다면, 이후의 API 호출을 수행하지 않고 함수를 종료합니다.
+        self.state = .loading
+        
         try? await Task.sleep(for: .milliseconds(500))
         guard !Task.isCancelled else { return }
-        // guard는 조건이 true일 때만 코드 블록을 실행하고, false일 경우에는 else 블록을 실행합니다.
-        // !searchTerm.is는 검색어가 비어있지 않은 경우에만 실행검색어가 비어있으면 함수 실행을 종료합니다.
-//        guard !searchTerm.isEmpty else {
-//            return
-//        }
-        // 로딩 시작상태로 변경
-        self.state = .loading
         
         do {
             //API호출 하는 메서드실행
