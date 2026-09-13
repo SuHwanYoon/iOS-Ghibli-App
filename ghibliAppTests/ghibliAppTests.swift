@@ -10,7 +10,8 @@ import Foundation
 @testable import ghibliApp
 
 struct ghibliAppTests {
-    struct MockGhibliService: GhibliService {
+    //actor는 외부에서 접근하는 공유 상태를 안전하게 관리할 수 있도록 도와주는 Swift의 동시성 모델입니다. actor 내부의 상태는 외부에서 직접 접근할 수 없으며, actor 내부에서 정의된 메서드를 통해서만 접근할 수 있습니다. 이를 통해 데이터 경쟁(race condition)과 같은 동시성 문제를 방지할 수 있습니다.
+    actor MockGhibliService: GhibliService {
         
         // 샘플 JSON 데이터를 포함하는 파일 이름
 //        private struct SampleData: Decodable {
@@ -42,6 +43,10 @@ struct ghibliAppTests {
         let mockFilms: [Film]
         let shouldThrowError: Bool
         let fetchDelay: Duration
+        
+        
+        var fetchCallCount = 0 // fetchFilms 메서드가 호출된 횟수를 추적하는 변수입니다.
+        var lastSearchTerm: String? // searchFilm 메서드가 마지막으로 호출될 때 사용된 검색어를 저장하는 변수입니다.
         
         // 기본값을 지정한 이유는 테스트에서 모든 매개변수를 항상 지정하지 않아도 되도록 하기 위함입니다. 예를 들어, 단순히 mockFilms만 지정하고 싶을 때, shouldThrowError와 fetchDelay는 기본값으로 설정되어 있어 편리하게 사용할 수 있습니다.
         init(mockFilms: [Film],
@@ -80,7 +85,11 @@ struct ghibliAppTests {
 //            return allFilms.filter { film in
 //                film.title.localizedCaseInsensitiveContains(searchTerm)
 //            }
-            //
+            
+            // fetchCallCount를 증가시키고 lastSearchTerm을 업데이트합니다.
+            self.fetchCallCount += 1
+            self.lastSearchTerm = searchTerm
+            
             // 만약 shouldThrowError가 true이면 APIError.networkError를 던집니다.
             if shouldThrowError {
                 throw APIError.networkError(NSError(domain: "Mock Error", code: -1, userInfo: nil))
@@ -96,6 +105,7 @@ struct ghibliAppTests {
             }
             // 검색어를 대소문자 구분 없이 포함하는 영화들을 필터링하여 반환합니다.
             return mockFilms.filter {
+                // $0는 클로저의 첫 번째 매개변수를 나타내며, 여기서는 Film 객체를 의미합니다. title.localizedCaseInsensitiveContains(searchTerm)는 Film 객체의 title 속성이 searchTerm을 대소문자 구분 없이 포함하는지 확인합니다.
                 $0.title.localizedCaseInsensitiveContains(searchTerm)
             }
         }
@@ -220,10 +230,8 @@ struct ghibliAppTests {
         }
     }
     
-    // testCancellationAfterAPICall 함수는
-//    SearchFilmsViewModel의 fetch 메서드가 API 호출 후에 작업이 취소되었을 때
-//    상태 업데이트가 발생하지 않는지 확인하는 테스트입니다.
-    // 상태 업데이트가 발생하지 않아야 하는 이유는, fetch 메서드가 API 호출 후에 작업이 취소되면 더 이상 상태를 업데이트하지 않고 종료되어야 하기 때문입니다.
+    
+    // 이 함수가 테스트 하려는 사용자의 동작은 사용자가 검색어를 입력한 후, API 호출이 완료되기 전에 다른 작업을 수행하거나 검색어 입력을 중단하는 것입니다. 이 경우 fetch 메서드는 API 호출 후에 작업이 취소되었음을 감지하고 상태를 업데이트하지 않아야 합니다.
     @MainActor
     @Test("Task cancellation after API call prevents state update")
     func testCancellationAfterAPICall() async throws {
@@ -247,7 +255,19 @@ struct ghibliAppTests {
         // 5. fetch 메서드가 완료될 때까지 기다린다.
         await task.value
         
-        print(viewModel.state)
+        // fetchCallCount와 lastSearchTerm을 확인하여 fetch 메서드가 호출되었는지, 그리고 마지막으로 사용된 검색어가 "tot"인지 확인합니다.
+        let fetchCallCount = await service.fetchCallCount
+        #expect(fetchCallCount == 1)
+        
+        // lastSearchTerm을 확인하여 fetch 메서드가 호출되었는지, 그리고 마지막으로 사용된 검색어가 "tot"인지 확인합니다.
+        let lastSearchTerm = await service.lastSearchTerm
+        #expect(lastSearchTerm == "tot")
+        
+        // 6. 작업이 취소된 후에도 상태가 업데이트되지 않았는지 확인한다.
+        // 대기중에 작업이 취소되었기 때문에, viewModel의 상태는 여전히 초기상태인 .idle 상태여야 합니다.
+        #expect(viewModel.state == .idle)
+        
+        
         
     }
 }

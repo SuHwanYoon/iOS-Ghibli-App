@@ -11,6 +11,8 @@ import Foundation
 // Codable은 Encodable과 Decodable 프로토콜을 모두 포함합니다.
 
 // Identifiable 프로토콜을 채택하여 각 Film 인스턴스가 고유한 식별자를 가질 수 있습니다.
+// struct에 nonisolated 키워드를 사용하면 구조체의 인스턴스가 여러 스레드에서 동시에 접근될 수 있음을 나타냅니다.
+nonisolated
 struct Film: Codable, Identifiable , Equatable, Hashable{
     let id: String
     let title: String
@@ -61,6 +63,8 @@ struct Film: Codable, Identifiable , Equatable, Hashable{
                    people: ["https://ghibliapi.vercel.app/people/598f7048-74ff-41e0-92ef-87dc1ad980a9"])
     }
     
+    // static에 @MainActor를 붙이는 이유는 SwiftUI의 미리보기(preview)에서 UI 업데이트가 메인 스레드에서 이루어져야 하기 때문입니다.
+    @MainActor
     static var exampleFavorite: Film {
         // preview용 Json 더미 데이터를 쓰는경우
         //MockGhibliService().fetchFilm()

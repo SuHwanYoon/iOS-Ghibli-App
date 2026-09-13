@@ -9,7 +9,9 @@ import Foundation
 
 // LoadingState는 비동기 데이터 로딩의 상태를 나타내는 열거형입니다.
 // <T>는 제네릭 타입 매개변수로, 로딩된 데이터의 타입을 나타냅니다. 이 열거형은 네 가지 상태를 가질 수 있습니다:
-enum LoadingState<T> {
+// Equatable 프로토콜을 채택하여, Equatable타입을 준수하는 타입만 T자리에 넣을수 있도록 제한
+// LoadingState자체에 대한 Equatable 준수도 가능하게 합니다. 즉, 두 LoadingState 인스턴스를 비교할 수 있습니다.
+enum LoadingState<T: Equatable> : Equatable{
     
     //  idle: 초기 상태를 나타냅니다. 데이터 로딩이 시작되지 않은 상태입니다.
     case idle
