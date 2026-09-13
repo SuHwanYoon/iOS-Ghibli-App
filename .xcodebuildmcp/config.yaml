@@ -1,0 +1,12 @@
+schemaVersion: 1
+sessionDefaults:
+  projectPath: "ghibliApp.xcodeproj"
+  scheme: "ghibliApp"
+  simulatorName: "iPhone 17 Pro"
+enabledWorkflows:
+  - simulator
+  - project-discovery
+  - debugging
+  - ui-automation
+  - coverage
+  - utilities

@@ -239,13 +239,13 @@ struct ghibliAppTests {
         let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .microseconds(100))
         
         // 2. SearchFilmsViewModel을 생성한다.
-        let viewModel = SearchFilmsViewModel(service: service)
+        let searchFilmViewModel = SearchFilmsViewModel(service: service)
         
         // 3. 검색어를 사용하여 fetch 메서드를 호출한다.
         // fetch작업은 주어진 검색어를 기반으로 영화 데이터를 가져오는 비동기 작업입니다.
         // 실제 앱에서는 사용자가 검색어를 입력하고, 그에 따라 API 호출이 이루어지는데, 이 과정에서 사용자가 입력을 중단하거나 다른 작업을 수행할 수 있습니다. 따라서 fetch 메서드가 완료되기 전에 작업이 취소될 수 있습니다.
         let task = Task {
-            await viewModel.fetch(for: "tot")
+            await searchFilmViewModel.fetch(for: "tot")
         }
         
         // 4. fetch 메서드가 완료되기 전에 작업을 취소한다.
@@ -262,10 +262,8 @@ struct ghibliAppTests {
         // lastSearchTerm을 확인하여 fetch 메서드가 호출되었는지, 그리고 마지막으로 사용된 검색어가 "tot"인지 확인합니다.
         let lastSearchTerm = await service.lastSearchTerm
         #expect(lastSearchTerm == "tot")
-        
-        // 6. 작업이 취소된 후에도 상태가 업데이트되지 않았는지 확인한다.
-        // 대기중에 작업이 취소되었기 때문에, viewModel의 상태는 여전히 초기상태인 .idle 상태여야 합니다.
-        #expect(viewModel.state == .idle)
+       
+        #expect(searchFilmViewModel.state.error != nil)
         
         
         

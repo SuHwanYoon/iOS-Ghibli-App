@@ -10,6 +10,9 @@ import Observation
     
 @Observable
 class SearchFilmsViewModel {
+    
+    // lastSearchTerm 프로퍼티를 선언하고 초기값을 빈 문자열로 설정합니다. 이 프로퍼티는 마지막으로 검색된 영화 제목을 저장하는 데 사용됩니다.
+    private var currentSearchTerm: String = ""
     // state 프로퍼티를 선언하고 초기값을 .idle로 설정합니다. 이 프로퍼티는 현재 로딩 상태를 나타냅니다.
     // state는 LoadingState<[Film]> 타입으로, 로딩 상태와 함께 로드된 영화 데이터를 저장할 수 있습니다.
     var state: LoadingState<[Film]> = .idle
@@ -35,6 +38,9 @@ class SearchFilmsViewModel {
     // 일단 검색어가 비어있지 않은지 확인하고, 로딩 상태로 전환한 후
     // GhibliService를 통해 영화 데이터를 가져옵니다. 성공하면 상태를 .loaded로 변경하고, 실패하면 상태를 .error로 변경합니다.
     func fetch(for searchTerm: String) async {
+        // searchTerm이 이전 검색어와 동일하면 중복 호출을 방지하기 위해 함수를 종료합니다.
+        self.currentSearchTerm = searchTerm
+        
         // 중복호출을 방지하기 위해서
         // 현재상태가 idle일때만 실행 그외의 상태는 return으로 종료
 //        guard !state.isLoading || state.error != nil else { return }
@@ -45,9 +51,9 @@ class SearchFilmsViewModel {
         guard !Task.isCancelled else { return }
         // guard는 조건이 true일 때만 코드 블록을 실행하고, false일 경우에는 else 블록을 실행합니다.
         // !searchTerm.is는 검색어가 비어있지 않은 경우에만 실행검색어가 비어있으면 함수 실행을 종료합니다.
-        guard !searchTerm.isEmpty else {
-            return
-        }
+//        guard !searchTerm.isEmpty else {
+//            return
+//        }
         // 로딩 시작상태로 변경
         self.state = .loading
         
@@ -57,14 +63,24 @@ class SearchFilmsViewModel {
             // serive를 참조해서 상태에 loaded 형태의 상태와 films 배열을 함께 담음
             let films = try await service.searchFilm(for: searchTerm)
             self.state = .loaded(films)
-        }catch let error as APIError {
-            // APIError 타입의 오류가 발생하면
-            // errorDescription을 사용하여 오류 메시지를 상태에 담음
-            self.state = .error(error.errorDescription ?? "Unknown error")
+        
         }catch {
-            // 오류발생시는 error상태로 저장
-            self.state = .error("Unknown error")
+            setError(error, for: searchTerm)
         }
     }
     
+    
+    func setError(_ error: Error, for searchTerm: String) {
+        
+        guard currentSearchTerm == searchTerm else {
+            return
+        }
+        
+        if let apiError = error as? APIError {
+         self.state = .error(apiError.errorDescription ?? "Unknown error")
+        }else {
+            self.state = .error("Unknown error")
+        }
+        
+    }
 }
