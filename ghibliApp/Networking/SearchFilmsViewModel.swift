@@ -45,10 +45,10 @@ class SearchFilmsViewModel {
             return
         }
         
-        self.state = .loading
-        
         try? await Task.sleep(for: .milliseconds(500))
         guard !Task.isCancelled else { return }
+        
+        self.state = .loading
         
         do {
             //API호출 하는 메서드실행

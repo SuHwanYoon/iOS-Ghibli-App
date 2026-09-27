@@ -71,10 +71,23 @@ struct DefaultGhibliService: GhibliService {
     
     // Person을 가져오는 프로토콜 메서드의 구현체
     func fetchPerson(from URLString: String) async throws -> Person {
+        guard let url = URL(string: URLString) else {
+            throw APIError.invaildURL
+        }
+        let lastComponent = url.lastPathComponent
+        // 만약 ID가 누락된 루트 엔드포인트("people")라면 단일 Person 객체로 디코딩 불가하므로 invalidURL 오류 발생
+        guard !lastComponent.isEmpty && lastComponent != "people" else {
+            throw APIError.invaildURL
+        }
         // fetch 제네릭 메서드를 호출하여 Person.self 타입을 지정하여 호출
         return try await fetch(from: URLString, type: Person.self)
     }
     
+    // 전체 Person 배열을 가져오는 프로토콜 메서드의 구현체
+    func fetchPeople() async throws -> [Person] {
+        let url = "https://ghibliapi.vercel.app/people"
+        return try await fetch(from: url, type: [Person].self)
+    }
 }
 
 

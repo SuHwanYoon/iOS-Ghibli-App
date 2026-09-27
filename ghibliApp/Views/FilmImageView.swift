@@ -20,8 +20,7 @@ struct FilmImageView: View {
     }
     
     var body: some View {
-        AsyncImage(url: url){
-            phase in
+        AsyncImage(url: url) { phase in
             switch phase {
             case .empty:
                 Color.gray.opacity(0.1)
@@ -31,16 +30,22 @@ struct FilmImageView: View {
                     )
                 // 성공상태의 경우 이미지를 리사이즈 가능하고 채우기 모드로 표시
             case .success(let image):
-                image.resizable().scaledToFill()
+                image
+                    .resizable()
+                    .scaledToFill()
             case .failure(let error):
-                Text("Failed to load image: \(error.localizedDescription)")
-                    .foregroundColor(.red)
+                Color.gray.opacity(0.1)
+                    .overlay(
+                        Text("Failed to load image: \(error.localizedDescription)")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                    )
             @unknown default:
-                fatalError()
+                EmptyView()
             }
         }
-        
-        
     }
 }
 

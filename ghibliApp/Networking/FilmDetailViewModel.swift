@@ -40,43 +40,57 @@ class FilmDetailViewModel {
         // loading상태를 확인했으니 state를 loading상태로 변경
         state = .loading
         
-        //fetch에서 병렬로 가져온 여러 Person데이터를 담을 빈 배열 초기화
+        // fetch에서 가져온 여러 Person데이터를 담을 빈 배열 초기화
         var loadedPeople: [Person] = []
         
         do {
-            //withThrowingTaskGroup 구조는 Task생성과 결과수집이 명시적으로 구분됨
+            // 유효한 개별 인물 URL인지 확인 (루트 엔드포인트 ".../people/" 또는 빈 경로는 제외)
+            let validPersonURLs = film.people.filter { urlString in
+                guard let url = URL(string: urlString) else { return false }
+                let lastComponent = url.lastPathComponent
+                return !lastComponent.isEmpty && lastComponent != "people"
+            }
             
-            // Film에 등장하는 모든 사람(Person)의 정보를 병렬로 가져오는 로직
-            // 각 Person URL마다 네트워크 요청수행
-            // withThrowingTaskGroup을 사용하여 병렬로 여러 작업을 수행합니다.
-            // ThrowingTaskGroup은 작업 중 하나라도 오류가 발생하면 전체 그룹이 실패하도록 합니다.
-            // 현재 병렬로 처리되고 있기 때문에 순서보장이 안되는 상태
-            try await  withThrowingTaskGroup(of: Person.self){ group in
-                
-                for personInfoURL in film.people {
-                    group.addTask{
-                        try await self.service.fetchPerson(from: personInfoURL)
+            if validPersonURLs.isEmpty {
+                // 개별 인물 URL이 없는 경우(Ghibli API에서 ".../people/" 루트 URL을 준 경우):
+                // 전체 인물 목록을 가져와 현재 영화(film.id)에 속한 등장인물들만 필터링합니다.
+                let allPeople = try await service.fetchPeople()
+                loadedPeople = allPeople.filter { person in
+                    person.films.contains { filmURL in
+                        filmURL.contains(film.id) || (!film.id.isEmpty && filmURL.hasSuffix(film.id))
                     }
                 }
-                
-                // collect results as they complete
-                // 생성된 Task를 가지고 수집하고 결과를 반환하는 로직
-                // TaskGroup안의 Task가 끝나는 순서대로 결과를 하나씩 반환하고
-                // 잔환한 결과를 self.people 배열에 추가합니다.
-                for try await person in group {
-                    loadedPeople.append(person)
+            } else {
+                // withThrowingTaskGroup 구조는 Task생성과 결과수집이 명시적으로 구분됨
+                // Film에 등장하는 모든 사람(Person)의 정보를 병렬로 가져오는 로직
+                // 각 Person URL마다 네트워크 요청수행
+                // withThrowingTaskGroup을 사용하여 병렬로 여러 작업을 수행합니다.
+                // ThrowingTaskGroup은 작업 중 하나라도 오류가 발생하면 전체 그룹이 실패하도록 합니다.
+                try await withThrowingTaskGroup(of: Person.self) { group in
+                    for personInfoURL in validPersonURLs {
+                        group.addTask {
+                            try await self.service.fetchPerson(from: personInfoURL)
+                        }
+                    }
+                    
+                    // collect results as they complete
+                    // 생성된 Task를 가지고 수집하고 결과를 반환하는 로직
+                    // TaskGroup안의 Task가 끝나는 순서대로 결과를 하나씩 반환하고
+                    // 반환한 결과를 loadedPeople 배열에 추가합니다.
+                    for try await person in group {
+                        loadedPeople.append(person)
+                    }
                 }
-                
             }
             
             // 모든 Person 데이터를 성공적으로 가져왔으므로 상태를 loaded로 변경하고
             // 가져온 loadedPeople 배열을 상태에 담음
             state = .loaded(loadedPeople)
-        }catch let error as APIError {
+        } catch let error as APIError {
             // APIError 타입의 오류가 발생하면
             // errorDescription을 사용하여 오류 메시지를 상태에 담음
             self.state = .error(error.errorDescription ?? "Unknown error")
-        }catch {
+        } catch {
             // 오류발생시는 error상태로 저장
             self.state = .error("Unknown error")
         }

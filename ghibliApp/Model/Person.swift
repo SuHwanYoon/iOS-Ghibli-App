@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Person: Identifiable, Decodable, Equatable {
+nonisolated
+struct Person: Identifiable, Decodable, Equatable, Sendable {
     let id: String
     let name: String
     let gender: String

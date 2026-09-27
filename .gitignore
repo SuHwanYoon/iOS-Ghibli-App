@@ -95,3 +95,6 @@ Threads-Clone-App.git.bfg-report/
 # md file
 GEMINI.md
 AGENTS.md
+
+
+build/

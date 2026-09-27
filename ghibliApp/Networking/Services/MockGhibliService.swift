@@ -67,6 +67,12 @@ struct MockGhibliService: GhibliService {
 
     }
     
+    // 프로토콜의 전체 Person 데이터 가져오는 메서드 구현
+    func fetchPeople() async throws -> [Person] {
+        let data = try loadSampleData()
+        return data.people
+    }
+    
     // MARK: - Preview Helper
     // 미리보기용으로 사용할 수 있는 영화를 가져오는 메서드
     func fetchPreviewFilm()  -> Film {

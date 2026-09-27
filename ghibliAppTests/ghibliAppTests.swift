@@ -41,18 +41,28 @@ struct ghibliAppTests {
         // shouldThrowError는 네트워크 오류를 시뮬레이션할지 여부를 결정하는 플래그입니다.
         // fetchDelay는 fetch 메서드 호출 시 지연 시간을 설정하는 데 사용됩니다.
         let mockFilms: [Film]
+        let mockPeople: [Person]
         let shouldThrowError: Bool
         let fetchDelay: Duration
         
         
         var fetchCallCount = 0 // fetchFilms 메서드가 호출된 횟수를 추적하는 변수입니다.
         var lastSearchTerm: String? // searchFilm 메서드가 마지막으로 호출될 때 사용된 검색어를 저장하는 변수입니다.
+        private var searchStartedContinuation: CheckedContinuation<Void, Never>?
+
+        func waitForSearchStart() async {
+            await withCheckedContinuation { continuation in
+                self.searchStartedContinuation = continuation
+            }
+        }
         
         // 기본값을 지정한 이유는 테스트에서 모든 매개변수를 항상 지정하지 않아도 되도록 하기 위함입니다. 예를 들어, 단순히 mockFilms만 지정하고 싶을 때, shouldThrowError와 fetchDelay는 기본값으로 설정되어 있어 편리하게 사용할 수 있습니다.
-        init(mockFilms: [Film],
+        init(mockFilms: [Film] = [],
+             mockPeople: [Person] = [],
              shouldThrowError: Bool = false,
              fetchDelay: Duration = .zero) {
             self.mockFilms = mockFilms
+            self.mockPeople = mockPeople
             self.shouldThrowError = shouldThrowError
             self.fetchDelay = fetchDelay
         }
@@ -89,6 +99,8 @@ struct ghibliAppTests {
             // fetchCallCount를 증가시키고 lastSearchTerm을 업데이트합니다.
             self.fetchCallCount += 1
             self.lastSearchTerm = searchTerm
+            self.searchStartedContinuation?.resume()
+            self.searchStartedContinuation = nil
             
             // 만약 shouldThrowError가 true이면 APIError.networkError를 던집니다.
             if shouldThrowError {
@@ -112,13 +124,22 @@ struct ghibliAppTests {
         
         // 프로토콜의 Person 데이터 가져오는 메서드 구현
         func fetchPerson(from URLString: String) async throws -> Person {
-//            let data = try loadSampleData()
-//            
-//            // 샘플 데이터에서 첫 번째 인물을 반환합니다.
-//            return data.people.first!
-            
-            // dummy Person 데이터를 반환
+            if shouldThrowError {
+                throw APIError.networkError(NSError(domain: "Mock Error", code: -1, userInfo: nil))
+            }
+            // dummy Person 데이터를 반환하거나 mockPeople에서 검색
+            if let matched = mockPeople.first(where: { $0.url == URLString || URLString.contains($0.id) }) {
+                return matched
+            }
             return Person(id: "1", name: "Test Person", gender: "Male", age: "30", eyeColor: "Blue", hairColor: "Brown", films: [], species: "", url: URLString)
+        }
+        
+        // 프로토콜의 전체 Person 데이터 가져오는 메서드 구현
+        func fetchPeople() async throws -> [Person] {
+            if shouldThrowError {
+                throw APIError.networkError(NSError(domain: "Mock Error", code: -1, userInfo: nil))
+            }
+            return mockPeople
         }
         
         // MARK: - Preview Helper
@@ -235,24 +256,24 @@ struct ghibliAppTests {
     @MainActor
     @Test("Task cancellation after API call prevents state update")
     func testCancellationAfterAPICall() async throws {
-        // 1. Mock 서비스를 준비한다.
-        let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .milliseconds(100))
+        // 1. Mock 서비스를 준비한다. (API 취소 시뮬레이션을 위해 응답 지연 200ms 설정)
+        let service = MockGhibliService(mockFilms: mockFilms, fetchDelay: .milliseconds(200))
         
         // 2. SearchFilmsViewModel을 생성한다.
         let searchFilmViewModel = SearchFilmsViewModel(service: service)
         
         // 3. 검색어를 사용하여 fetch 메서드를 호출한다.
-        // fetch작업은 주어진 검색어를 기반으로 영화 데이터를 가져오는 비동기 작업입니다.
-        // 실제 앱에서는 사용자가 검색어를 입력하고, 그에 따라 API 호출이 이루어지는데, 이 과정에서 사용자가 입력을 중단하거나 다른 작업을 수행할 수 있습니다. 따라서 fetch 메서드가 완료되기 전에 작업이 취소될 수 있습니다.
         let task = Task {
             await searchFilmViewModel.fetch(for: "tot")
         }
         
-        // 4. fetch 메서드가 완료되기 전에 작업을 취소한다. (500ms 디바운스 완료 후 API 응답 대기 중인 550ms 시점에 취소)
-        try? await Task.sleep(for: .milliseconds(550))
+        // 4. 500ms 디바운스가 끝나고 service.searchFilm()이 실제로 시작될 때까지 안전하게 대기
+        await service.waitForSearchStart()
+        
+        // 5. API 호출이 시작된 직후 작업을 취소한다.
         task.cancel()
         
-        // 5. fetch 메서드가 완료될 때까지 기다린다.
+        // 6. fetch 메서드가 완료될 때까지 기다린다.
         await task.value
         
         // fetchCallCount와 lastSearchTerm을 확인하여 fetch 메서드가 호출되었는지, 그리고 마지막으로 사용된 검색어가 "tot"인지 확인합니다.
@@ -265,7 +286,169 @@ struct ghibliAppTests {
        
         #expect(searchFilmViewModel.state.error != nil)
         
+    }
+    @MainActor
+    @Test("Test that task is not fetching data too frequently")
+    func testDebounceTiming() async {
+        let service = MockGhibliService(mockFilms: mockFilms,
+                                        fetchDelay: .milliseconds(100))
+        let viewModel = SearchFilmsViewModel(service: service)
         
+        let task = Task {
+            await viewModel.fetch(for: "tot")
+        }
+ 
+        // cancel before debounce timing of 500ms is over (cancel at 200ms)
+        try? await Task.sleep(for: .milliseconds(200))
+        task.cancel()
         
+        await task.value
+        
+        let fetchCallCount = await service.fetchCallCount
+        #expect(fetchCallCount == 0)
+        
+        let lastSearchTerm = await service.lastSearchTerm
+        #expect(lastSearchTerm == nil)
+        #expect(viewModel.state == .idle)
+    }
+    
+    
+    @MainActor
+    @Test("Multiple rapid searches only execute the last one")
+    func testDebounceWithMultipleSearches() async {
+        let service = MockGhibliService(mockFilms: mockFilms)
+        
+        let viewModel = SearchFilmsViewModel(service: service)
+        
+        // Simulate rapid typing: "t", "to", "tot", "toto", "totor", "totoro"
+        let searchQueries = ["t", "to", "tot", "toto", "totor", "totoro"]
+        var tasks: [Task<Void, Never>] = []
+        
+        for query in searchQueries {
+            // Cancel previous task
+            tasks.last?.cancel()
+            
+            let task = Task {
+                await viewModel.fetch(for: query)
+            }
+            tasks.append(task)
+            
+            // Small delay between keystrokes
+            try? await Task.sleep(for: .milliseconds(50)) // shorter then 500ms debounce rate
+        }
+        
+        // Wait for the last task to complete
+        await tasks.last?.value
+        
+        let callCount = await service.fetchCallCount
+        let lastQuery = await service.lastSearchTerm
+        
+        #expect(callCount == 1, "Only the final search should execute")
+        #expect(lastQuery == "totoro", "Should search for the final query")
+        #expect(viewModel.state.data?.count == 1)
+        #expect(viewModel.state.data?.first?.title == "My Neighbor Totoro")
+    }
+    
+    @MainActor
+    @Test("Multiple slow searches execute all")
+    func testDebounceWithSlowMultipleSearches() async {
+        let service = MockGhibliService(mockFilms: mockFilms)
+        
+        let viewModel = SearchFilmsViewModel(service: service)
+        
+        // Simulate rapid typing: "t", "to", "tot", "toto", "totor", "totoro"
+        let searchQueries = ["tot", "totor", "totoro"]
+        var tasks: [Task<Void, Never>] = []
+        
+        for query in searchQueries {
+            // Cancel previous task
+            tasks.last?.cancel()
+            
+            let task = Task {
+                await viewModel.fetch(for: query)
+            }
+            tasks.append(task)
+            
+            // Small delay between keystrokes
+            try? await Task.sleep(for: .milliseconds(700))
+        }
+        
+        // Wait for the last task to complete
+        await tasks.last?.value
+        
+        let callCount = await service.fetchCallCount
+        let lastQuery = await service.lastSearchTerm
+        
+        #expect(callCount == 3, "all searchs should execute")
+        #expect(lastQuery == "totoro", "Should search for the final query")
+        #expect(viewModel.state.data?.count == 1)
+        #expect(viewModel.state.data?.first?.title == "My Neighbor Totoro")
+    }
+    
+    // MARK: - FilmDetailViewModel Tests
+    
+    @MainActor
+    @Test("FilmDetailViewModel with individual person URLs loads successfully")
+    func testFilmDetailWithIndividualPersonURLs() async {
+        let mockPeople = [
+            Person(id: "p1", name: "Pazu", gender: "Male", age: "13", eyeColor: "Black", hairColor: "Brown", films: ["https://ghibliapi.vercel.app/films/film-1"], species: "", url: "https://ghibliapi.vercel.app/people/p1")
+        ]
+        let service = MockGhibliService(mockPeople: mockPeople)
+        let viewModel = FilmDetailViewModel(service: service)
+        
+        let film = Film(id: "film-1", title: "Castle in the Sky", description: "", director: "", producer: "", releaseYear: "1986", score: "95", duration: "124", image: "", bannerImage: "", people: ["https://ghibliapi.vercel.app/people/p1"])
+        
+        await viewModel.fetch(for: film)
+        
+        if case .loaded(let people) = viewModel.state {
+            #expect(people.count == 1)
+            #expect(people.first?.name == "Pazu")
+        } else {
+            Issue.record("Expected state to be .loaded, but found \(viewModel.state)")
+        }
+    }
+    
+    @MainActor
+    @Test("FilmDetailViewModel with root people URL fallbacks to fetchPeople and filters by film ID")
+    func testFilmDetailWithRootPeopleURLFiltersCorrectly() async {
+        let mockPeople = [
+            Person(id: "p1", name: "Porco Rosso", gender: "Male", age: "Middle age", eyeColor: "Black", hairColor: "Brown", films: ["https://ghibliapi.vercel.app/films/film-porco"], species: "", url: "https://ghibliapi.vercel.app/people/p1"),
+            Person(id: "p2", name: "Totoro", gender: "NA", age: "NA", eyeColor: "Grey", hairColor: "Grey", films: ["https://ghibliapi.vercel.app/films/film-totoro"], species: "", url: "https://ghibliapi.vercel.app/people/p2")
+        ]
+        let service = MockGhibliService(mockPeople: mockPeople)
+        let viewModel = FilmDetailViewModel(service: service)
+        
+        // film.people이 루트 엔드포인트 ".../people/"로만 온 경우
+        let film = Film(id: "film-porco", title: "Porco Rosso", description: "", director: "", producer: "", releaseYear: "1992", score: "94", duration: "93", image: "", bannerImage: "", people: ["https://ghibliapi.vercel.app/people/"])
+        
+        await viewModel.fetch(for: film)
+        
+        if case .loaded(let people) = viewModel.state {
+            #expect(people.count == 1)
+            #expect(people.first?.name == "Porco Rosso")
+        } else {
+            Issue.record("Expected state to be .loaded, but found \(viewModel.state)")
+        }
+    }
+    
+    @MainActor
+    @Test("FilmDetailViewModel with no matching people returns empty loaded array")
+    func testFilmDetailWithNoMatchingPeopleReturnsEmptyArray() async {
+        let mockPeople = [
+            Person(id: "p1", name: "Pazu", gender: "Male", age: "13", eyeColor: "Black", hairColor: "Brown", films: ["https://ghibliapi.vercel.app/films/film-laputa"], species: "", url: "https://ghibliapi.vercel.app/people/p1")
+        ]
+        let service = MockGhibliService(mockPeople: mockPeople)
+        let viewModel = FilmDetailViewModel(service: service)
+        
+        // 일치하는 캐릭터가 없는 경우
+        let film = Film(id: "film-grave", title: "Grave of the Fireflies", description: "", director: "", producer: "", releaseYear: "1988", score: "97", duration: "89", image: "", bannerImage: "", people: ["https://ghibliapi.vercel.app/people/"])
+        
+        await viewModel.fetch(for: film)
+        
+        if case .loaded(let people) = viewModel.state {
+            #expect(people.isEmpty)
+        } else {
+            Issue.record("Expected state to be .loaded with empty array, but found \(viewModel.state)")
+        }
     }
 }
