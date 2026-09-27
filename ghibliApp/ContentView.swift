@@ -16,8 +16,14 @@ struct ContentView: View {
     @State private var filmsViewModel = FilmsViewModel()
     @State private var favoritesViewModel = FavoritesViewModel()
     
-    // 설정에서 변경될 언어를 저장하고 앱 전체 환경에 전달하는 AppStorage
-    @AppStorage("appLanguage") private var selectedLanguage: String = AppLanguage.korean.rawValue
+    // 기본값으로 시스템 설정을 따르며, 사용자가 변경 시 영구 저장
+    @AppStorage("appLanguage") private var selectedLanguage: String = AppLanguage.system.rawValue
+    
+    // 현재 언어 설정에 따른 로케일 계산
+    private var currentLocale: Locale {
+        let appLanguage = AppLanguage(rawValue: selectedLanguage) ?? .system
+        return appLanguage.locale
+    }
 
     var body: some View {
         
@@ -41,7 +47,7 @@ struct ContentView: View {
             }
         }
         // 하위 모든 뷰에 선택된 언어 로케일 환경변수 주입
-        .environment(\.locale, Locale(identifier: selectedLanguage))
+        .environment(\.locale, currentLocale)
         // task 수명주기 modifier는 뷰가 나타날 때 비동기 작업을 실행할 수 있게 해줍니다. 여기서는 filmsViewModel과 favoritesViewModel의 load() 메서드를 호출하여 데이터를 로드하는 작업을 수행합니다.
         
         .task {

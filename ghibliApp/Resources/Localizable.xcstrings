@@ -1,6 +1,30 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "app_name" : {
+      "comment" : "앱 이름",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ghibli Collection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ジブリコレクション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지브리모음"
+          }
+        }
+      }
+    },
     "favorite_add" : {
       "comment" : "즐겨찾기 추가 버튼 접근성 레이블",
       "localizations" : {
@@ -227,6 +251,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "지브리 영화"
+          }
+        }
+      }
+    },
+    "language_system" : {
+      "comment" : "언어 설정 중 시스템 기본값 옵션",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 설정"
           }
         }
       }
