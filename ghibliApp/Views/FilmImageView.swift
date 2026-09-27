@@ -36,7 +36,7 @@ struct FilmImageView: View {
             case .failure(let error):
                 Color.gray.opacity(0.1)
                     .overlay(
-                        Text("Failed to load image: \(error.localizedDescription)")
+                        Text("film_image_load_failure \(error.localizedDescription)")
                             .font(.caption)
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)

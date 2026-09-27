@@ -15,21 +15,24 @@ struct ContentView: View {
     // FavoriteViewModel 인스턴스도 상태 변수로 선언합니다.
     @State private var filmsViewModel = FilmsViewModel()
     @State private var favoritesViewModel = FavoritesViewModel()
+    
+    // 설정에서 변경될 언어를 저장하고 앱 전체 환경에 전달하는 AppStorage
+    @AppStorage("appLanguage") private var selectedLanguage: String = AppLanguage.korean.rawValue
 
     var body: some View {
         
         
         // TabView는 여러 개의 뷰를 탭 형식으로 전환할 수 있게 해주는 컨테이너 뷰입니다.
         TabView {
-            Tab("Movies", systemImage: "movieclapper"){
+            Tab("tab_movies", systemImage: "movieclapper"){
                 FilmsScreen(filmsViewModel: filmsViewModel,
                             favoritesViewModel: favoritesViewModel)
             }
-            Tab("Favorites", systemImage: "heart"){
+            Tab("tab_favorites", systemImage: "heart"){
                 FavoritesScreen(filmsViewModel: filmsViewModel,
                 favoritesViewModel: favoritesViewModel)
             }
-            Tab("Settings", systemImage: "gear"){
+            Tab("tab_settings", systemImage: "gear"){
                 SettingScreen()
             }
             // role 속성은 탭의 역할을 지정하는 데 사용됩니다. .search 역할은 이 탭이 검색 기능과 관련이 있음을 나타냅니다.
@@ -37,6 +40,8 @@ struct ContentView: View {
                 SearchScreen(favoriteViewModel: favoritesViewModel)
             }
         }
+        // 하위 모든 뷰에 선택된 언어 로케일 환경변수 주입
+        .environment(\.locale, Locale(identifier: selectedLanguage))
         // task 수명주기 modifier는 뷰가 나타날 때 비동기 작업을 실행할 수 있게 해줍니다. 여기서는 filmsViewModel과 favoritesViewModel의 load() 메서드를 호출하여 데이터를 로드하는 작업을 수행합니다.
         
         .task {

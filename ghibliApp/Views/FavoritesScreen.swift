@@ -31,14 +31,14 @@ struct FavoritesScreen: View {
         NavigationStack{
             Group{
                 if films.isEmpty{
-                    ContentUnavailableView("No Favorites yet", systemImage: "heart" )
+                    ContentUnavailableView("favorites_empty_state", systemImage: "heart" )
                 }else{
                     FilmListView(films: films,
                                  favoritesViewModel: favoritesViewModel)
                 }
                 
             }
-            .navigationTitle("Favorites")
+            .navigationTitle("favorites_navigation_title")
         }
     }
 }

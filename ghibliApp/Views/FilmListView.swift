@@ -88,7 +88,7 @@ private struct FilmRow: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                // releaseYear를 표시하는 Text뷰입니다.
-               Text("Release Year: \(film.releaseYear)")
+               Text("film_list_release_year \(film.releaseYear)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

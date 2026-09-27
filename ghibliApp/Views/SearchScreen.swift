@@ -33,7 +33,7 @@ struct SearchScreen: View {
             VStack{
                 switch searchViewModel.state {
                 case .idle:
-                    Text("Show search here")
+                    Text("search_prompt_placeholder")
                 case .loading:
                     ProgressView()
                 case .error(let error):
@@ -43,7 +43,7 @@ struct SearchScreen: View {
                     
                 }
             }
-            .searchable(text: $text)
+            .searchable(text: $text, prompt: Text("search_field_prompt"))
             .task(id: text){
                 
                 // await self.searchViewModel.fetch(for: text) 메서드를 호출하여 검색어에 해당하는 영화를 가져옵니다. 이 메서드는 비동기적으로 실행되며, 검색 결과가 로드되면 searchViewModel의 상태가 업데이트되어 UI가 자동으로 갱신됩니다.

@@ -33,6 +33,7 @@ struct FavoriteButton: View {
                   isFavorite ? "heart.fill" :"heart")
             .foregroundColor(isFavorite ? .red : .gray)
         }
+        .accessibilityLabel(Text(isFavorite ? "favorite_remove" : "favorite_add"))
         
         
     }

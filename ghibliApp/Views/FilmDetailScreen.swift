@@ -9,6 +9,9 @@ import SwiftUI
 
 struct FilmDetailScreen: View {
     
+    // 상위 환경에서 전달되는 로케일 환경변수
+    @Environment(\.locale) private var locale
+    
     // 호출시 받을 film 객체 선언
     let film: Film
     // 호출시 받을 favoritesViewModel 객체 선언
@@ -38,7 +41,7 @@ struct FilmDetailScreen: View {
                     
                     Divider()
                     
-                    Text("Characters")
+                    Text("film_detail_characters_title")
                         .font(.title3)
                     // 상태에 따라 다른 UI를 표시
                     // .loaded 상태일 때는 등장인물 목록을 표시
@@ -47,7 +50,7 @@ struct FilmDetailScreen: View {
                     case .loading: ProgressView()
                     case .loaded(let people):
                         if people.isEmpty {
-                            Text("등장인물 정보가 없습니다.")
+                            Text("film_detail_no_characters")
                                 .foregroundColor(.secondary)
                                 .font(.subheadline)
                         } else {
@@ -81,10 +84,23 @@ struct FilmDetailScreen: View {
 
 
 #Preview {
-    NavigationStack {
-        
-        // preview에서는 더미 데이터 가져와서 표시중
-        FilmDetailScreen(film: Film.example,
-                         favoritesViewModel: FavoritesViewModel(service: MockFavoriteStorage()))
+    Group {
+        NavigationStack {
+            FilmDetailScreen(film: Film.example,
+                             favoritesViewModel: FavoritesViewModel(service: MockFavoriteStorage()))
+        }
+        .environment(\.locale, Locale(identifier: "ko"))
+
+        NavigationStack {
+            FilmDetailScreen(film: Film.example,
+                             favoritesViewModel: FavoritesViewModel(service: MockFavoriteStorage()))
+        }
+        .environment(\.locale, Locale(identifier: "en"))
+
+        NavigationStack {
+            FilmDetailScreen(film: Film.example,
+                             favoritesViewModel: FavoritesViewModel(service: MockFavoriteStorage()))
+        }
+        .environment(\.locale, Locale(identifier: "ja"))
     }
 }

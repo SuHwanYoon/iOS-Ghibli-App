@@ -51,6 +51,9 @@ struct ghibliAppTests {
         private var searchStartedContinuation: CheckedContinuation<Void, Never>?
 
         func waitForSearchStart() async {
+            if fetchCallCount > 0 {
+                return
+            }
             await withCheckedContinuation { continuation in
                 self.searchStartedContinuation = continuation
             }
@@ -283,7 +286,7 @@ struct ghibliAppTests {
         // lastSearchTerm을 확인하여 fetch 메서드가 호출되었는지, 그리고 마지막으로 사용된 검색어가 "tot"인지 확인합니다.
         let lastSearchTerm = await service.lastSearchTerm
         #expect(lastSearchTerm == "tot")
-       
+ 
         #expect(searchFilmViewModel.state.error != nil)
         
     }

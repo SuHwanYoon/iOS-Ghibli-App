@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingScreen: View {
     var body: some View {
-        Text("Settings Screen")
+        Text("settings_title")
     }
 }
 

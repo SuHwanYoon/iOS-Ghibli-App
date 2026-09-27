@@ -26,7 +26,7 @@ struct FilmsScreen: View {
                     // .idle 상태일 때는 "No Films yet"라는 텍스트를 표시하고
                     // .task 수식어를 사용하여 fetch() 메서드를 호출하여 영화 데이터를 가져옵니다.
                 case .idle:
-                    Text("No Films yet")
+                    Text("films_empty_state")
                     
                     // .loading 상태일 때는 ProgressView를 표시하여 로딩 중임을 나타냅니다.
                 case .loading:
@@ -44,7 +44,7 @@ struct FilmsScreen: View {
                         .foregroundColor(.red)
                 }
             }
-            .navigationTitle("Ghibli Films")
+            .navigationTitle("films_navigation_title")
         }
     }
 }
