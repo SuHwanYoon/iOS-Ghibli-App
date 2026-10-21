@@ -20,19 +20,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ghibli Collection"
+            "value" : "Dotori Library"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ジブリコレクション"
+            "value" : "ドトリ書斎"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지브리모음"
+            "value" : "도토리 서재"
           }
         }
       }
@@ -708,6 +708,190 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "설정"
+          }
+        }
+      }
+    },
+    "settings_section_support" : {
+      "comment" : "설정 화면 지원 및 법적 고지 섹션 헤더",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support & Legal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サポートと法的情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지원 및 법적 고지"
+          }
+        }
+      }
+    },
+    "settings_privacy_policy" : {
+      "comment" : "설정 화면 개인정보 처리방침 링크",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 처리방침"
+          }
+        }
+      }
+    },
+    "settings_contact_us" : {
+      "comment" : "설정 화면 개발자 문의하기 버튼",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact Developer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発者に問い合わせ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발자에게 문의하기"
+          }
+        }
+      }
+    },
+    "settings_disclaimer_title" : {
+      "comment" : "설정 화면 면책 조항 타이틀",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disclaimer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "免責事項"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "면책 조항"
+          }
+        }
+      }
+    },
+    "settings_disclaimer_text" : {
+      "comment" : "설정 화면 면책 조항 안내 문구",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app is an unofficial fan-made guide app and is not affiliated with, endorsed, or sponsored by Studio Ghibli. All film and character assets belong to their respective copyright holders."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本アプリは非公式のファンメイドガイドアプリであり、株式会社スタジオジブリとは一切の関係がありません。表示されるすべての作品およびキャラクター情報の著作権は各権利者に帰属します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "본 앱은 비공식 팬 메이드 가이드 앱이며, Studio Ghibli와 어떠한 제휴나 후원 관계도 없습니다. 앱에 표시되는 모든 작품 및 캐릭터 정보의 저작권은 해당 권리자에게 있습니다."
+          }
+        }
+      }
+    },
+    "settings_contact_email_copied_title" : {
+      "comment" : "이메일 복사 완료 알림 타이틀",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email Copied"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスをコピーしました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 주소 복사됨"
+          }
+        }
+      }
+    },
+    "settings_contact_email_copied_message %@" : {
+      "comment" : "기기에 메일 계정이 없을 때 클립보드 복사 안내 메시지",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail account is not configured on this device. The support email address (%@) has been copied to your clipboard."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスにメールアカウントが設定されていないため、お問い合わせ先メールアドレス（%@）をクリップボードにコピーしました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기에 Mail 계정이 설정되어 있지 않아 문의 이메일 주소(%@)가 클립보드에 복사되었습니다."
+          }
+        }
+      }
+    },
+    "common_ok" : {
+      "comment" : "공통 확인 버튼",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
           }
         }
       }

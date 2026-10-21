@@ -44,6 +44,9 @@ struct SettingScreen: View {
 
                 // 3. 앱 정보 섹션
                 AppInfoSectionView()
+
+                // 4. 지원 및 법적 고지 섹션 (개인정보처리방침, 문의하기, 면책조항)
+                SupportAndLegalSectionView()
             }
             .accessibilityIdentifier("settings_form")
             .onAppear {
@@ -238,6 +241,138 @@ struct AppInfoSectionView: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .accessibilityIdentifier("settings_about_section")
+    }
+}
+
+// MARK: - 5. Support & Legal Section View
+
+/// 지원 및 법적 고지(개인정보처리방침, 문의 메일, 면책 조항) 섹션 뷰입니다.
+struct SupportAndLegalSectionView: View {
+    @ScaledMetric private var iconSize: CGFloat = 16
+    @ScaledMetric private var iconBoxSize: CGFloat = 28
+
+    @AppStorage("appLanguage") private var selectedLanguageRaw: String = AppLanguage.system.rawValue
+    @State private var isShowingEmailCopiedAlert = false
+
+    /// 개발자 문의 이메일 (스토어 지원용)
+    private let supportEmail = "support@dotorilibrary.app"
+
+    private var currentLanguage: AppLanguage {
+        AppLanguage(rawValue: selectedLanguageRaw) ?? .system
+    }
+
+    /// 현재 언어 설정(ko, en, ja)에 맞춘 다국어 개인정보 처리방침 GitHub Pages URL
+    private var privacyPolicyURL: URL? {
+        let langCode = currentLanguage.effectiveLanguageCode
+        return URL(string: "https://suhwanyoon.github.io/iOS-Ghibli-App/privacy/\(langCode).html")
+    }
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+    }
+
+    var body: some View {
+        Section {
+            // 1. 개인정보 처리방침 링크 (현재 언어에 맞춰 자동 분기)
+            if let url = privacyPolicyURL {
+                Link(destination: url) {
+                    HStack(spacing: 14) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.blue.gradient)
+                                .frame(width: iconBoxSize, height: iconBoxSize)
+
+                            Image(systemName: "hand.raised.fill")
+                                .font(.system(size: iconSize, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                        .accessibilityHidden(true)
+
+                        Text("settings_privacy_policy")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+
+                        Spacer()
+
+                        Image(systemName: "arrow.up.right")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
+                    }
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .accessibilityIdentifier("settings_privacy_policy_link")
+            }
+
+            // 2. 개발자 문의하기 (메일 전송 또는 클립보드 복사)
+            Button(action: handleContactDeveloper) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.orange.gradient)
+                            .frame(width: iconBoxSize, height: iconBoxSize)
+
+                        Image(systemName: "envelope.fill")
+                            .font(.system(size: iconSize, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+                    .accessibilityHidden(true)
+
+                    Text("settings_contact_us")
+                        .font(.body)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("settings_contact_us_button")
+        } header: {
+            Text("settings_section_support")
+                .accessibilityAddTraits(.isHeader)
+        } footer: {
+            // 3. 지브리 IP 면책 조항 (Apple 심사 Guideline 5.2.1 리젝 방지)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("settings_disclaimer_title")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                Text("settings_disclaimer_text")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.top, 4)
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("settings_disclaimer_footer")
+        }
+        .accessibilityIdentifier("settings_support_section")
+        .alert("settings_contact_email_copied_title", isPresented: $isShowingEmailCopiedAlert) {
+            Button("common_ok", role: .cancel) {}
+        } message: {
+            Text(String(localized: "settings_contact_email_copied_message \(supportEmail)"))
+        }
+    }
+
+    /// 문의 메일 핸들러: Mail 앱이 있으면 열고, 없으면 이메일 주소를 클립보드에 복사
+    private func handleContactDeveloper() {
+        let subject = "Dotori Library Support (v\(appVersion))"
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let mailtoURLString = "mailto:\(supportEmail)?subject=\(encodedSubject)"
+
+        if let mailtoURL = URL(string: mailtoURLString), UIApplication.shared.canOpenURL(mailtoURL) {
+            UIApplication.shared.open(mailtoURL)
+        } else {
+            UIPasteboard.general.string = supportEmail
+            isShowingEmailCopiedAlert = true
+        }
     }
 }
 
