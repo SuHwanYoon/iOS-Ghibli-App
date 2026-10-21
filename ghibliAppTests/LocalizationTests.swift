@@ -66,6 +66,13 @@ struct LocalizationTests {
         #expect(AppLanguage.system.locale.identifier == systemEffective)
     }
 
+    @Test("AppLanguage.localizedString returns the exact translation for each language")
+    func testAppLanguageLocalizedString() {
+        #expect(AppLanguage.korean.localizedString(for: "films_navigation_title") == "지브리 영화 리스트")
+        #expect(AppLanguage.english.localizedString(for: "films_navigation_title") == "Ghibli Film List")
+        #expect(AppLanguage.japanese.localizedString(for: "films_navigation_title") == "ジブリ映画リスト")
+    }
+
     @Test("String Catalog provides valid translations for each language")
     func testStringCatalogTranslations() throws {
         let appBundle = Bundle(for: FilmDetailViewModel.self)
@@ -77,10 +84,12 @@ struct LocalizationTests {
         let koEmpty = NSLocalizedString("film_detail_no_characters", bundle: koBundle, comment: "")
         let koTabMovies = NSLocalizedString("tab_movies", bundle: koBundle, comment: "")
         let koSystem = NSLocalizedString("language_system", bundle: koBundle, comment: "")
+        let koFilmsTitle = NSLocalizedString("films_navigation_title", bundle: koBundle, comment: "")
         #expect(koCharacters == "등장인물")
         #expect(koEmpty == "등장인물 정보가 없습니다.")
         #expect(koTabMovies == "영화")
         #expect(koSystem == "시스템 설정")
+        #expect(koFilmsTitle == "지브리 영화 리스트")
         
         // English bundle test
         let enPath = try #require(appBundle.path(forResource: "en", ofType: "lproj"))
@@ -89,10 +98,12 @@ struct LocalizationTests {
         let enEmpty = NSLocalizedString("film_detail_no_characters", bundle: enBundle, comment: "")
         let enTabMovies = NSLocalizedString("tab_movies", bundle: enBundle, comment: "")
         let enSystem = NSLocalizedString("language_system", bundle: enBundle, comment: "")
+        let enFilmsTitle = NSLocalizedString("films_navigation_title", bundle: enBundle, comment: "")
         #expect(enCharacters == "Characters")
         #expect(enEmpty == "No character information available.")
         #expect(enTabMovies == "Movies")
         #expect(enSystem == "System Default")
+        #expect(enFilmsTitle == "Ghibli Film List")
         
         // Japanese bundle test
         let jaPath = try #require(appBundle.path(forResource: "ja", ofType: "lproj"))
@@ -101,10 +112,12 @@ struct LocalizationTests {
         let jaEmpty = NSLocalizedString("film_detail_no_characters", bundle: jaBundle, comment: "")
         let jaTabMovies = NSLocalizedString("tab_movies", bundle: jaBundle, comment: "")
         let jaSystem = NSLocalizedString("language_system", bundle: jaBundle, comment: "")
+        let jaFilmsTitle = NSLocalizedString("films_navigation_title", bundle: jaBundle, comment: "")
         #expect(jaCharacters == "登場人物")
         #expect(jaEmpty == "登場人物の情報がありません。")
         #expect(jaTabMovies == "映画")
         #expect(jaSystem == "システム設定")
+        #expect(jaFilmsTitle == "ジブリ映画リスト")
     }
 
     @Test("App display name is localized properly in InfoPlist and Localizable catalogs")

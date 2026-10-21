@@ -15,6 +15,18 @@ struct FilmsScreen: View {
     let filmsViewModel : FilmsViewModel
     let favoritesViewModel : FavoritesViewModel
     
+    // 앱 언어 설정 관찰 및 실시간 언어 번들 기반 타이틀 로드
+    @AppStorage("appLanguage") private var selectedLanguage: String = AppLanguage.system.rawValue
+
+    private var currentAppLanguage: AppLanguage {
+        AppLanguage(rawValue: selectedLanguage) ?? .system
+    }
+
+    // 선택된 언어 번들에서 직접 'films_navigation_title' 번역 문자열 로드
+    private var navigationTitleText: String {
+        currentAppLanguage.localizedString(for: "films_navigation_title")
+    }
+
     var body: some View {
         // NavigationStack는 네비게이션 기반의 UI를 구성하는 컨테이너입니다.
         // Group는 여러 뷰를 하나의 단위로 묶어주는 컨테이너입니다.
@@ -44,8 +56,10 @@ struct FilmsScreen: View {
                         .foregroundColor(.red)
                 }
             }
-            .navigationTitle("films_navigation_title")
+            .navigationTitle(navigationTitleText)
         }
+        // 언어 변경 시 NavigationStack의 UINavigationBar 타이틀 캐시를 새로고침하도록 id 부여
+        .id(selectedLanguage)
     }
 }
 

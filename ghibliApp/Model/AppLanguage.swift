@@ -60,4 +60,24 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var locale: Locale {
         Locale(identifier: effectiveLanguageCode)
     }
+
+    /// 실제 언어 코드에 해당하는 .lproj 번들을 반환합니다.
+    var bundle: Bundle {
+        let code = effectiveLanguageCode
+        let targetBundle = Bundle(for: FilmDetailViewModel.self)
+        if let path = targetBundle.path(forResource: code, ofType: "lproj"),
+           let langBundle = Bundle(path: path) {
+            return langBundle
+        }
+        if let path = Bundle.main.path(forResource: code, ofType: "lproj"),
+           let langBundle = Bundle(path: path) {
+            return langBundle
+        }
+        return Bundle.main
+    }
+
+    /// 지정된 키에 대한 번역 문자열을 현재 언어 번들에서 직접 로드합니다.
+    func localizedString(for key: String, comment: String = "") -> String {
+        NSLocalizedString(key, bundle: self.bundle, comment: comment)
+    }
 }

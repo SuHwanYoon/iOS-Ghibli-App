@@ -38,7 +38,6 @@ struct FavoritesScreen: View {
                 }
                 
             }
-            .navigationTitle("favorites_navigation_title")
         }
     }
 }

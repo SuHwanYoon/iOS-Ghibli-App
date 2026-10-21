@@ -18,11 +18,17 @@ struct ContentView: View {
     
     // 기본값으로 시스템 설정을 따르며, 사용자가 변경 시 영구 저장
     @AppStorage("appLanguage") private var selectedLanguage: String = AppLanguage.system.rawValue
+    @AppStorage(AppAppearance.storageKey) private var selectedAppearance: String = AppAppearance.system.rawValue
     
     // 현재 언어 설정에 따른 로케일 계산
     private var currentLocale: Locale {
         let appLanguage = AppLanguage(rawValue: selectedLanguage) ?? .system
         return appLanguage.locale
+    }
+
+    // 현재 테마 설정에 따른 AppAppearance 계산
+    private var currentAppearance: AppAppearance {
+        AppAppearance.from(rawValue: selectedAppearance)
     }
 
     var body: some View {
@@ -38,16 +44,23 @@ struct ContentView: View {
                 FavoritesScreen(filmsViewModel: filmsViewModel,
                 favoritesViewModel: favoritesViewModel)
             }
-            Tab("tab_settings", systemImage: "gear"){
-                SettingScreen()
-            }
             // role 속성은 탭의 역할을 지정하는 데 사용됩니다. .search 역할은 이 탭이 검색 기능과 관련이 있음을 나타냅니다.
             Tab(role: .search){
                 SearchScreen(favoriteViewModel: favoritesViewModel)
             }
+            Tab("tab_settings", systemImage: "gear"){
+                SettingScreen()
+            }
         }
         // 하위 모든 뷰에 선택된 언어 로케일 환경변수 주입
         .environment(\.locale, currentLocale)
+        .preferredColorScheme(currentAppearance.colorScheme)
+        .onAppear {
+            currentAppearance.apply()
+        }
+        .onChange(of: selectedAppearance) { _, newValue in
+            AppAppearance.from(rawValue: newValue).apply()
+        }
         // task 수명주기 modifier는 뷰가 나타날 때 비동기 작업을 실행할 수 있게 해줍니다. 여기서는 filmsViewModel과 favoritesViewModel의 load() 메서드를 호출하여 데이터를 로드하는 작업을 수행합니다.
         
         .task {
