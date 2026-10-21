@@ -363,7 +363,7 @@ struct SupportAndLegalSectionView: View {
 
     /// 문의 메일 핸들러: Mail 앱이 있으면 열고, 없으면 이메일 주소를 클립보드에 복사
     private func handleContactDeveloper() {
-        let subject = "Dotori Library Support (v\(appVersion))"
+        let subject = "Dotori Film Support (v\(appVersion))"
         let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let mailtoURLString = "mailto:\(supportEmail)?subject=\(encodedSubject)"
 

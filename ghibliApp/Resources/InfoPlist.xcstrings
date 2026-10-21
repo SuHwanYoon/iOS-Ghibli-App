@@ -8,19 +8,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotori Library"
+            "value" : "Dotori Film"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ドトリ書斎"
+            "value" : "ドトリフィルム"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도토리 서재"
+            "value" : "도토리 필름"
           }
         }
       }
@@ -31,19 +31,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotori Library"
+            "value" : "Dotori Film"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ドトリ書斎"
+            "value" : "ドトリフィルム"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도토리 서재"
+            "value" : "도토리 필름"
           }
         }
       }

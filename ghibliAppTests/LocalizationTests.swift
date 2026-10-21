@@ -130,8 +130,8 @@ struct LocalizationTests {
         let koDisplayName = koBundle.localizedInfoDictionary?["CFBundleDisplayName"] as? String
             ?? NSLocalizedString("CFBundleDisplayName", tableName: "InfoPlist", bundle: koBundle, comment: "")
         let koAppName = NSLocalizedString("app_name", bundle: koBundle, comment: "")
-        #expect(koDisplayName == "도토리 서재")
-        #expect(koAppName == "도토리 서재")
+        #expect(koDisplayName == "도토리 필름")
+        #expect(koAppName == "도토리 필름")
         
         // English test
         let enPath = try #require(appBundle.path(forResource: "en", ofType: "lproj"))
@@ -139,8 +139,8 @@ struct LocalizationTests {
         let enDisplayName = enBundle.localizedInfoDictionary?["CFBundleDisplayName"] as? String
             ?? NSLocalizedString("CFBundleDisplayName", tableName: "InfoPlist", bundle: enBundle, comment: "")
         let enAppName = NSLocalizedString("app_name", bundle: enBundle, comment: "")
-        #expect(enDisplayName == "Dotori Library")
-        #expect(enAppName == "Dotori Library")
+        #expect(enDisplayName == "Dotori Film")
+        #expect(enAppName == "Dotori Film")
         
         // Japanese test
         let jaPath = try #require(appBundle.path(forResource: "ja", ofType: "lproj"))
@@ -148,7 +148,7 @@ struct LocalizationTests {
         let jaDisplayName = jaBundle.localizedInfoDictionary?["CFBundleDisplayName"] as? String
             ?? NSLocalizedString("CFBundleDisplayName", tableName: "InfoPlist", bundle: jaBundle, comment: "")
         let jaAppName = NSLocalizedString("app_name", bundle: jaBundle, comment: "")
-        #expect(jaDisplayName == "ドトリ書斎")
-        #expect(jaAppName == "ドトリ書斎")
+        #expect(jaDisplayName == "ドトリフィルム")
+        #expect(jaAppName == "ドトリフィルム")
     }
 }
