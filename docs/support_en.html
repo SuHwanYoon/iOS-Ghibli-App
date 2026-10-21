@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Support - Dotori Library</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #1c1c1e;
+            --text-secondary: #636366;
+            --accent-color: #7b4b28;
+            --border-color: #e5e5ea;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --card-bg: #1c1c1e;
+                --text-primary: #f2f2f7;
+                --text-secondary: #8e8e93;
+                --accent-color: #d4a373;
+                --border-color: #2c2c2e;
+            }
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 24px 16px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 32px 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+        .lang-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        .lang-switch a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 4px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .lang-switch a.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .app-badge {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 8px 0;
+            color: var(--text-primary);
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+        .card {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+        }
+        .contact-btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+        .contact-btn:hover {
+            opacity: 0.9;
+        }
+        .faq-item {
+            margin-bottom: 16px;
+        }
+        .faq-q {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .faq-a {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 13px;
+            text-align: center;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lang-switch">
+            <a href="support.html">한국어</a>
+            <a href="support_en.html" class="active">English</a>
+            <a href="support_ja.html">日本語</a>
+        </div>
+
+        <div class="header">
+            <div class="app-badge">Official App Support</div>
+            <h1>Dotori Library</h1>
+            <div class="subtitle">Classic Animation Film Archive & Fan Guide Support</div>
+        </div>
+
+        <div class="card">
+            <h2>✉️ Contact Developer & Support</h2>
+            <p>If you encounter any bugs, have feature requests, or need assistance, feel free to email us anytime. We will respond promptly.</p>
+            <p><strong>Support Email:</strong> suhwan6@gmail.com</p>
+            <a href="mailto:suhwan6@gmail.com?subject=[Dotori%20Library%20Support]" class="contact-btn">Send Support Email</a>
+        </div>
+
+        <div class="card">
+            <h2>❓ Frequently Asked Questions (FAQ)</h2>
+            <div class="faq-item">
+                <div class="faq-q">Q. Do I need an account to use the app?</div>
+                <div class="faq-a">A. No. Dotori Library requires no login, account creation, or personal information. You can explore all film details freely.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Q. Can I view my favorite films offline?</div>
+                <div class="faq-a">A. Yes. Your favorite films and recently fetched data are cached securely on your device, allowing you to access them even when offline.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Q. How do I change the theme or language?</div>
+                <div class="faq-a">A. Go to the Settings tab in the bottom navigation bar to switch between Light/Dark mode and change your preferred language (Korean/English/Japanese).</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📜 Disclaimer</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                'Dotori Library' is an unofficial fan application and is not affiliated with, endorsed, or sponsored by Studio Ghibli Inc. All film titles, posters, and character information belong to their respective copyright owners.
+            </p>
+        </div>
+
+        <div class="footer">
+            <a href="privacy/ko.html">개인정보 처리방침 (한국어)</a> |
+            <a href="privacy/en.html">Privacy Policy (English)</a> |
+            <a href="privacy/ja.html">プライバシーポリシー (日本語)</a>
+            <p style="margin-top: 12px;">&copy; 2026 Dotori Library. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
