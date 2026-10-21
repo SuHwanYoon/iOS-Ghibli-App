@@ -255,7 +255,7 @@ struct SupportAndLegalSectionView: View {
     @State private var isShowingEmailCopiedAlert = false
 
     /// 개발자 문의 이메일 (스토어 지원용)
-    private let supportEmail = "support@dotorilibrary.app"
+    private let supportEmail = "suhwan6@gmail.com"
 
     private var currentLanguage: AppLanguage {
         AppLanguage(rawValue: selectedLanguageRaw) ?? .system
